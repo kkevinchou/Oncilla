@@ -12,7 +12,7 @@ from lib.resource_manager import ResourceManager
 
 from oncilla.ecs.system.render import RenderSystem
 from oncilla.ecs.system.physics import PhysicsSystem
-from oncilla.ecs.entity.block import Block, PinnedBlock
+from oncilla.ecs.entity.block import Block, PinnedBlock, WackBlock
 
 def set_up_systems():
     system_manager = SystemManager.get_instance()
@@ -34,8 +34,12 @@ def run():
     resource_manager = ResourceManager.get_instance()
     resource_manager.setup(settings.SPRITES_FOLDER)
     system_manager = set_up_systems()
-    PinnedBlock(100, 100, 100, 100)
-    Block(300, 100, 100, 100)
+    # PinnedBlock(100, 100, 100, 100)
+    # PinnedBlock(100, 100, 100, 100)
+    # Block(300, 100, 100, 100)
+
+    WackBlock(100, 100, [20 * Vec2d(0.5, -0.5), 20 * Vec2d(-0.5, 0.5), 20 * Vec2d(0.5, 1.5), 20 * Vec2d(1.5, 0.5)])
+    WackBlock(100, 100, [20 * Vec2d(1, 0), 20 * Vec2d(0, 1), 20 * Vec2d(1, 2), 20 * Vec2d(2, 1)])
 
     clock = pygame.time.Clock()
     quit = False

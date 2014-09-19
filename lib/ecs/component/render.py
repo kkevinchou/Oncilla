@@ -51,16 +51,17 @@ class ShapeRenderComponent(RenderComponent):
         self.draw_edges(screen, self.shape_component.get_points())
         # self.draw_c_polygon(screen)
 
-class SimpleRenderComponent(RenderComponent):
+class PointsRenderComponent(RenderComponent):
     def __init__(self, entity):
         self.entity = entity
 
     def draw_lines(self, screen, points, color=(0, 0, 0)):
-        for i in range(len(points) - 1):
+        for i in range(len(points)):
             point_a = points[(i + 1) % len(points)]
             point_b = points[i]
             pygame.draw.line(screen, color, point_a, point_b)
 
     def draw(self, screen):
         color=(65, 15, 25)
-        pygame.draw.circle(screen, color, (int(self.entity.position[0]), int(self.entity.position[1])), 3, 3)
+        self.draw_lines(screen, self.entity[ShapeComponent].get_points())
+        # pygame.draw.circle(screen, color, (int(self.entity.position[0]), int(self.entity.position[1])), 3, 3)

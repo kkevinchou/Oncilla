@@ -1,5 +1,5 @@
-from lib.ecs.component.shape import RectShapeComponent
-from lib.ecs.component.render import ShapeRenderComponent, SimpleRenderComponent
+from lib.ecs.component.shape import RectShapeComponent, DefinedShapeComponent
+from lib.ecs.component.render import ShapeRenderComponent, PointsRenderComponent
 from lib.ecs.system_manager import SystemManager
 from lib.ecs.entity.entity import Entity
 from lib.ecs.component.physics import PhysicsComponent, SkipGravityComponent
@@ -40,3 +40,25 @@ class PinnedBlock(Block):
         skip_gravity_component = SkipGravityComponent()
 
         return [shape_component, render_component, physics_component, skip_gravity_component]
+
+class WackBlock(Entity):
+    system_manager = SystemManager.get_instance()
+
+    def __init__(self, x, y, points):
+        super(WackBlock, self).__init__(x, y)
+        self.points = points
+
+        self.set_components(self.create_components())
+
+        Block.system_manager.send_message({
+            'message_type': MESSAGE_TYPE.CREATE_ENTITY,
+            'entity_type': 'block',
+            'entity': self
+        })
+
+    def create_components(self):
+        shape_component = DefinedShapeComponent(self, self.points)
+        render_component = PointsRenderComponent(self)
+
+        return [shape_component, render_component]
+

@@ -39,9 +39,21 @@ class Vec2d(object):
     # String representaion (for debugging)
     def __repr__(self):
         return 'Vec2d(%s, %s)' % (self.x, self.y)
+
+    def __hash__(self):
+        _x = self.x
+        _y = self.y
+
+        if int(self.x) == self.x:
+            _x = int(self.x)
+
+        if int(self.y) == self.y:
+            _y = int(self.y)
+
+        return hash("{}_{}".format(_x, _y))
  
     # Comparison
-    def __eq__(self, other):
+    def __eq__(self, other):        
         if hasattr(other, "__getitem__") and len(other) == 2:
             return self.x == other[0] and self.y == other[1]
         else:
@@ -158,6 +170,9 @@ class Vec2d(object):
             self.x *= other
             self.y *= other
         return self
+
+    def get_negations(self):
+        return [Vec2d(-self.x, self.y), Vec2d(self.x, -self.y), self * -1]
  
     # Division
     def __div__(self, other):
@@ -313,6 +328,9 @@ class Vec2d(object):
         other_length_sqrd = other[0]*other[0] + other[1]*other[1]
         projected_length_times_other_length = self.dot(other)
         return other*(projected_length_times_other_length/other_length_sqrd)
+
+    def scalar_projection(self, other):
+        return self.dot(other)/other.get_length()
  
     def cross(self, other):
         return self.x*other[1] - self.y*other[0]
