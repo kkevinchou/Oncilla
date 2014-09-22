@@ -17,4 +17,5 @@ class SystemManager(object):
 
     def update(self, delta):
         for system in self.systems:
-            system.update(delta)
+            if system.update(delta) is False:
+                return False

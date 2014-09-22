@@ -12,20 +12,20 @@ from lib.resource_manager import ResourceManager
 
 from oncilla.ecs.system.render import RenderSystem
 from oncilla.ecs.system.physics import PhysicsSystem
-from oncilla.ecs.entity.block import Block, PinnedBlock, WackBlock
+from lib.ecs.system.input import InputSystem
+from oncilla.ecs.entity.block import Block, PinnedBlock, WackBlock, PlayerBlock
 
 def set_up_systems():
     system_manager = SystemManager.get_instance()
 
-    # movement_system = MovementSystem(AStarPlanner())
-
+    input_system = InputSystem()
     render_system = RenderSystem(800, 600)
     physics_system = PhysicsSystem()
 
     system_manager.init([
-        # movement_system,
         render_system,
         physics_system,
+        input_system,
     ])
 
     return system_manager
@@ -34,29 +34,18 @@ def run():
     resource_manager = ResourceManager.get_instance()
     resource_manager.setup(settings.SPRITES_FOLDER)
     system_manager = set_up_systems()
-    # PinnedBlock(100, 100, 100, 100)
-    # PinnedBlock(100, 100, 100, 100)
-    # Block(300, 100, 100, 100)
 
-    WackBlock(100, 100, [20 * Vec2d(0.5, -0.5), 20 * Vec2d(-0.5, 0.5), 20 * Vec2d(0.5, 1.5), 20 * Vec2d(1.5, 0.5)])
-    WackBlock(100, 100, [20 * Vec2d(1, 0), 20 * Vec2d(0, 1), 20 * Vec2d(1, 2), 20 * Vec2d(2, 1)])
+    PinnedBlock(0, 300, 600, 50)
+    PlayerBlock(650, 250, 64, 64)
+
+    # WackBlock(100, 100, [20 * Vec2d(0.5, -0.5), 20 * Vec2d(-0.5, 0.5), 20 * Vec2d(0.5, 1.5), 20 * Vec2d(1.5, 0.5)])
+    # WackBlock(100, 100, [20 * Vec2d(1, 0), 20 * Vec2d(0, 1), 20 * Vec2d(1, 2), 20 * Vec2d(2, 1)])
 
     clock = pygame.time.Clock()
     quit = False
 
     while True:
-        system_manager.update(1 / float(30))
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                quit = True
-            elif event.type == pygame.MOUSEBUTTONDOWN:
-                mouse_pos = pygame.mouse.get_pos()
-
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_ESCAPE]:
-            quit = True
-
-        if quit:
+        if system_manager.update(1 / float(30)) is False:
             sys.exit()
 
         clock.tick(60)

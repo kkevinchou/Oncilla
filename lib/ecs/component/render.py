@@ -21,7 +21,8 @@ class SpriteRenderComponent(RenderComponent):
         self.sprite = SpriteRenderComponent.resource_manager.get_sprite(sprite_file)
 
     def draw(self, screen):
-        screen.blit(self.sprite, self.entity.position - Vec2d(int(self.width) / 2, int(self.height) / 2))
+        # screen.blit(self.sprite, self.entity.position - Vec2d(int(self.width) / 2, int(self.height) / 2))
+        screen.blit(self.sprite, self.entity.position)
 
 class ShapeRenderComponent(RenderComponent):
     def __init__(self, shape_component):

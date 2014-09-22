@@ -77,19 +77,24 @@ class SeparatingAxisTest(unittest.TestCase):
         assert len(l_0) == len(l_1)
         assert len(set(l_0).intersection(set(l_1))) == len(l_0)
 
-    def test(self):
+    # def test(self):
+    #     points_0 = [Vec2d(1, 0), Vec2d(0, 0), Vec2d(0, 1), Vec2d(1, 1)]
+    #     points_1 = [Vec2d(1.5, 0), Vec2d(0.5, 0), Vec2d(0.5, 1), Vec2d(1.5, 1)]
+    #     result = calculate_separating_axes(points_0, points_1)
+    #     self.assertSameElements(result, [Vec2d(-0.5, 0), Vec2d(1.5, 0), Vec2d(0, 1), Vec2d(0, -1)])
+
+    # def test_angled(self):
+    #     points_0 = [Vec2d(0.5, -0.5), Vec2d(-0.5, 0.5), Vec2d(0.5, 1.5), Vec2d(1.5, 0.5)]
+    #     points_1 = [Vec2d(1, 0), Vec2d(0, 1), Vec2d(1, 2), Vec2d(2, 1)]
+    #     result = calculate_separating_axes(points_0, points_1)
+    #     self.assertSameElements(result, [Vec2d(-0.5, -0.5), Vec2d(-1.0, 1.0), Vec2d(1.0, -1.0), Vec2d(1.5, 1.5)])
+
+    def test_non_overlapping(self):
         points_0 = [Vec2d(1, 0), Vec2d(0, 0), Vec2d(0, 1), Vec2d(1, 1)]
-        points_1 = [Vec2d(1.5, 0), Vec2d(0.5, 0), Vec2d(0.5, 1), Vec2d(1.5, 1)]
+        points_1 = [Vec2d(3, 0), Vec2d(2, 0), Vec2d(2, 1), Vec2d(3, 1)]
         result = calculate_separating_axes(points_0, points_1)
-        self.assertSameElements(result, [Vec2d(-0.5, 0), Vec2d(1.5, 0), Vec2d(0, 1), Vec2d(0, -1)])
-
-    def test_angled(self):
-        points_0 = [Vec2d(0.5, -0.5), Vec2d(-0.5, 0.5), Vec2d(0.5, 1.5), Vec2d(1.5, 0.5)]
-        points_1 = [Vec2d(1, 0), Vec2d(0, 1), Vec2d(1, 2), Vec2d(2, 1)]
-        result = calculate_separating_axes(points_0, points_1)
-        self.assertSameElements(result, [Vec2d(-0.5, -0.5), Vec2d(-1.0, 1.0), Vec2d(1.0, -1.0), Vec2d(1.5, 1.5)])
-        
-
+        print result
+        self.assertSameElements(result, [])
     # def ztest_visual(self):
     #     pygame.init()
     #     size = width, height = 320, 240

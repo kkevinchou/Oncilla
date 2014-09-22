@@ -1,10 +1,15 @@
+import pygame
+from lib.vec2d import Vec2d
+
 from lib.ecs.component.shape import RectShapeComponent, DefinedShapeComponent
-from lib.ecs.component.render import ShapeRenderComponent, PointsRenderComponent
+from lib.ecs.component.render import ShapeRenderComponent, PointsRenderComponent, SpriteRenderComponent
 from lib.ecs.system_manager import SystemManager
 from lib.ecs.entity.entity import Entity
 from lib.ecs.component.physics import PhysicsComponent, SkipGravityComponent
+from lib.ecs.component.input import KeyboardInputComponent
 
 from oncilla.ecs.message_types import MESSAGE_TYPE
+from oncilla.commands import JumpCommand, MoveLeftCommand, MoveRightCommand
 
 class Block(Entity):
     system_manager = SystemManager.get_instance()
@@ -27,11 +32,36 @@ class Block(Entity):
 
         return [shape_component, render_component, physics_component]
 
+class PlayerBlock(Block):
+    def jump(self):
+        self[PhysicsComponent].velocity += Vec2d(0, -100)
+
+    def move_left(self):
+        self[PhysicsComponent].velocity += Vec2d(-100, 0)
+
+    def move_right(self):
+        self[PhysicsComponent].velocity += Vec2d(100, 0)
+
+    def create_components(self, width, height):
+        shape_component = RectShapeComponent(self, width, height)
+        render_component = ShapeRenderComponent(shape_component)
+        render_component = SpriteRenderComponent(self, 'mite.png', width, height)
+        physics_component = PhysicsComponent(self)
+
+        keyboard_input_component = KeyboardInputComponent(self)
+        keyboard_input_component.bind(pygame.K_w, JumpCommand())
+        keyboard_input_component.bind(pygame.K_a, MoveLeftCommand())
+        keyboard_input_component.bind(pygame.K_d, MoveRightCommand())
+
+        return [
+            shape_component,
+            render_component,
+            physics_component,
+            keyboard_input_component
+        ]
+
 class PinnedBlock(Block):
     system_manager = SystemManager.get_instance()
-
-    def __init__(self, x, y, width, height):
-        super(PinnedBlock, self).__init__(x, y, width, height)
 
     def create_components(self, width, height):
         shape_component = RectShapeComponent(self, width, height)

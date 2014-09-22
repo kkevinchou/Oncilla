@@ -24,7 +24,7 @@ def get_min_max_projection(points, vectors, axis):
 
     return min_proj, max_proj
 
-def calculate_separating_axes(points_0, points_1):
+def calculate_separating_vectors(points_0, points_1):
     polygon_vectors_0 = [p2 - p1 for p1, p2 in circular_pairs(points_0)]
     polygon_normals_0 = [v.perpendicular().normalized() for v in polygon_vectors_0]
 
@@ -38,19 +38,22 @@ def calculate_separating_axes(points_0, points_1):
         else:
             axes.add(normal)
 
-    separating_axes = []
+    separating_vectors = []
+
+    overlap = True
 
     for axis in axes:
         min_proj_0, max_proj_0 = get_min_max_projection(points_0, polygon_vectors_0, axis)
         min_proj_1, max_proj_1 = get_min_max_projection(points_1, polygon_vectors_1, axis)
 
-        if max_proj_0 > min_proj_1:
+        if max_proj_0 > min_proj_1 and min_proj_0 <= min_proj_1:
             delta = -(max_proj_0 - min_proj_1)
-        elif max_proj_1 > min_proj_0:
+        elif max_proj_1 > min_proj_0 and min_proj_1 <= min_proj_0:
             delta = max_proj_1 - min_proj_0
         else:
+            overlap = False
             continue
 
-        separating_axes.append(axis * delta)
+        separating_vectors.append(axis * delta)
 
-    return separating_axes
+    return separating_vectors, overlap

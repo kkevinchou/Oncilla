@@ -37,7 +37,7 @@ class RenderSystem(System):
 
     def update(self, delta):
         self.handle_messages()
-        self.clear()
+        self.clear((171, 218, 237))
 
         for entity in self.entities:
             render_component = entity[RenderComponent]
