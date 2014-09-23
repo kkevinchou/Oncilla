@@ -52,7 +52,7 @@ class ShapeRenderComponent(RenderComponent):
         self.draw_edges(screen, self.shape_component.get_points())
         # self.draw_c_polygon(screen)
 
-class PointsRenderComponent(RenderComponent):
+class PolygonRenderComponent(RenderComponent):
     def __init__(self, entity):
         self.entity = entity
 

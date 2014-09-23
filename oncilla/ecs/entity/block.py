@@ -2,7 +2,7 @@ import pygame
 from lib.vec2d import Vec2d
 
 from lib.ecs.component.shape import RectShapeComponent, DefinedShapeComponent
-from lib.ecs.component.render import ShapeRenderComponent, PointsRenderComponent, SpriteRenderComponent
+from lib.ecs.component.render import ShapeRenderComponent, PolygonRenderComponent, SpriteRenderComponent
 from lib.ecs.system_manager import SystemManager
 from lib.ecs.entity.entity import Entity
 from lib.ecs.component.physics import PhysicsComponent, SkipGravityComponent
@@ -88,7 +88,7 @@ class WackBlock(Entity):
 
     def create_components(self):
         shape_component = DefinedShapeComponent(self, self.points)
-        render_component = PointsRenderComponent(self)
+        render_component = PolygonRenderComponent(self)
 
         return [shape_component, render_component]
 
