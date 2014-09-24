@@ -6,6 +6,8 @@ from lib.resource_manager import ResourceManager
 from lib.geometry.polygon import Polygon
 from lib.vec2d import Vec2d
 
+from oncilla.ecs.message_types import ENTITY_MESSAGE_TYPE
+
 class RenderComponent(Component):
     component_id = 'RenderComponent'
 
@@ -27,24 +29,44 @@ class SpriteRenderComponent(RenderComponent):
         screen.blit(self.sprite, self.entity.position)
 
 class AnimationRenderComponent(RenderComponent):
-    def __init__(self, entity, spritesheet_file):
+    def __init__(self, entity, spritesheet):
+        message_handlers = {
+            ENTITY_MESSAGE_TYPE.JUMPED: self.handle_jump,
+        }
+        super(AnimationRenderComponent, self).__init__(message_handlers)
+
         self.entity = entity
+        self.animation = 'idle'
         self.frame = 0
         self.elapsed_time = 0
-        self.sprite = SpriteRenderComponent.resource_manager.get_spritesheet(spritesheet_file)
+        self.sprite, self.metadata = SpriteRenderComponent.resource_manager.get_spritesheet(spritesheet)
+
+    def set_animation(self, animation):
+        self.animation = animation
+        self.frame = 0
+        self.elapsed_time = 0
+
+    def handle_jump(self, message):
+        self.set_animation('jump')
+
+    def handle_land(self, message):
 
     def update(self, delta):
         self.elapsed_time += delta
-        print delta
-        while self.elapsed_time > 1:
+        num_frames = self.metadata[self.animation]['num_frames']
+        seconds_per_frame = self.metadata[self.animation]['seconds_per_frame']
+
+        while self.elapsed_time > seconds_per_frame:
             self.frame += 1
-            self.frame = self.frame % 2
-            self.elapsed_time -= 1
+            self.frame = self.frame % num_frames
+            self.elapsed_time -= seconds_per_frame
 
     def draw(self, screen):
-        width = 64
-        height = 64
-        screen.blit(self.sprite, self.entity.position, pygame.Rect(self.frame * width, 0, width, height))
+        width = self.metadata[self.animation]['width']
+        height = self.metadata[self.animation]['height']
+        y = self.metadata[self.animation]['y']
+
+        screen.blit(self.sprite, self.entity.position, pygame.Rect(self.frame * width, y, width, height))
 
 class ShapeRenderComponent(RenderComponent):
     def __init__(self, shape_component):

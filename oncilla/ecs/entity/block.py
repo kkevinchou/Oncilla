@@ -35,6 +35,7 @@ class Block(Entity):
 class PlayerBlock(Block):
     def jump(self):
         self[PhysicsComponent].velocity += Vec2d(0, -450)
+        self[AnimationRenderComponent].set_animation('jump')
 
     def move_left(self):
         self[PhysicsComponent].velocity += Vec2d(-200, 0)
@@ -45,8 +46,8 @@ class PlayerBlock(Block):
     def create_components(self, width, height):
         shape_component = RectShapeComponent(self, width, height)
         # render_component = ShapeRenderComponent(shape_component)
-        # render_component = SpriteRenderComponent(self, 'mite.png', width, height)
-        render_component = AnimationRenderComponent(self, 'testsheet.png')
+        # render_component = SpriteRenderComponent(self, 'mite', width, height)
+        render_component = AnimationRenderComponent(self, 'testsheet')
         physics_component = PhysicsComponent(self)
 
         keyboard_input_component = KeyboardInputComponent(self)

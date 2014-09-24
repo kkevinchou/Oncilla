@@ -1,5 +1,6 @@
 import os
 import pygame
+import json
 
 from oncilla import settings
 
@@ -33,13 +34,26 @@ class ResourceManager(object):
     def load_spritesheets(self):
         print ' *** [ResourceManager :: Loading Sprite Sheets]'
         for f in os.listdir(self.spritesheets_folder):
-            spritesheet_path = os.path.join(self.spritesheets_folder, f)
-            if os.path.isfile(spritesheet_path):
-                self.spritesheets[f] = pygame.image.load(spritesheet_path)
-                print ' *** Loaded {}'.format(spritesheet_path)
+            file_path = os.path.join(self.spritesheets_folder, f)
+            filename, extension = os.path.splitext(f)
 
-    def get_sprite(self, sprite):
-        return self.sprites.get(sprite)
+            if os.path.isfile(file_path) and extension == '.png':
+                sheet = pygame.image.load(file_path)
+                json_file_path = os.path.join(self.spritesheets_folder, filename + '.json')
 
-    def get_spritesheet(self, sprite):
-        return self.spritesheets.get(sprite)
+                if os.path.isfile(json_file_path):
+                    with open(json_file_path, 'r') as json_file:
+                        metadata = json.loads(json_file.read())
+                else:
+                    raise Exception('Exception in ResourceManager: json file for {} not found'.format(filename + extension))
+
+                self.spritesheets[filename] = sheet, metadata
+
+                print ' *** Loaded {}'.format(file_path)
+
+
+    def get_sprite(self, name):
+        return self.sprites.get(name)
+
+    def get_spritesheet(self, name):
+        return self.spritesheets.get(name)

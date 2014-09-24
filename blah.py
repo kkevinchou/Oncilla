@@ -34,7 +34,7 @@ def run():
     system_manager = set_up_systems()
 
     PinnedBlock(0, 300, 600, 50)
-    PlayerBlock(650, 250, 64, 64)
+    PlayerBlock(100, 0, 64, 64)
 
     # WackBlock(100, 100, [20 * Vec2d(0.5, -0.5), 20 * Vec2d(-0.5, 0.5), 20 * Vec2d(0.5, 1.5), 20 * Vec2d(1.5, 0.5)])
     # WackBlock(100, 100, [20 * Vec2d(1, 0), 20 * Vec2d(0, 1), 20 * Vec2d(1, 2), 20 * Vec2d(2, 1)])
