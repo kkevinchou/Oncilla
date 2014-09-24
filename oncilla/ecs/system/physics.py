@@ -60,7 +60,7 @@ class PhysicsSystem(System):
                 if 'Gravity' in physics_component.forces:
                     physics_component.forces.pop('Gravity')
             else:
-                physics_component.forces['Gravity'] = Vec2d(0, 100)
+                physics_component.forces['Gravity'] = Vec2d(0, 1200)
 
             sum_forces = sum([force for force in physics_component.forces.itervalues()])
             if sum_forces == 0:

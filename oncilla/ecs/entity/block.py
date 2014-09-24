@@ -34,13 +34,13 @@ class Block(Entity):
 
 class PlayerBlock(Block):
     def jump(self):
-        self[PhysicsComponent].velocity += Vec2d(0, -100)
+        self[PhysicsComponent].velocity += Vec2d(0, -450)
 
     def move_left(self):
-        self[PhysicsComponent].velocity += Vec2d(-100, 0)
+        self[PhysicsComponent].velocity += Vec2d(-200, 0)
 
     def move_right(self):
-        self[PhysicsComponent].velocity += Vec2d(100, 0)
+        self[PhysicsComponent].velocity += Vec2d(200, 0)
 
     def create_components(self, width, height):
         shape_component = RectShapeComponent(self, width, height)

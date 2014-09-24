@@ -1,7 +1,7 @@
 import unittest
 import sys, pygame
 
-
+from oncilla import settings
 from lib.vec2d import Vec2d
 from lib.geometry.util import generate_random_polygon, create_polygons
 from lib.pathfinding.astar.astarplanner import AStarPlanner
@@ -43,10 +43,10 @@ def run():
     quit = False
 
     while True:
-        if system_manager.update(1 / float(30)) is False:
+        if system_manager.update(1 / float(settings.FRAMES_PER_SECOND)) is False:
             sys.exit()
 
-        clock.tick(60)
+        clock.tick(settings.FRAMES_PER_SECOND)
 
 if __name__ == '__main__':
     run()

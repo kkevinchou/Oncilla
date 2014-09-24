@@ -22,12 +22,8 @@ class SpriteRenderComponent(RenderComponent):
         self.entity = entity
         self.width, self.height = width, height
         self.sprite = SpriteRenderComponent.resource_manager.get_sprite(sprite_file)
-        print '+=============='
-        print self.sprite
-        print '+=============='
 
     def draw(self, screen):
-        # screen.blit(self.sprite, self.entity.position - Vec2d(int(self.width) / 2, int(self.height) / 2))
         screen.blit(self.sprite, self.entity.position)
 
 class AnimationRenderComponent(RenderComponent):
@@ -39,6 +35,7 @@ class AnimationRenderComponent(RenderComponent):
 
     def update(self, delta):
         self.elapsed_time += delta
+        print delta
         while self.elapsed_time > 1:
             self.frame += 1
             self.frame = self.frame % 2
