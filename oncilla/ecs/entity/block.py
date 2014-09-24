@@ -2,7 +2,7 @@ import pygame
 from lib.vec2d import Vec2d
 
 from lib.ecs.component.shape import RectShapeComponent, DefinedShapeComponent
-from lib.ecs.component.render import ShapeRenderComponent, PolygonRenderComponent, SpriteRenderComponent
+from lib.ecs.component.render import ShapeRenderComponent, PolygonRenderComponent, SpriteRenderComponent, AnimationRenderComponent
 from lib.ecs.system_manager import SystemManager
 from lib.ecs.entity.entity import Entity
 from lib.ecs.component.physics import PhysicsComponent, SkipGravityComponent
@@ -44,8 +44,9 @@ class PlayerBlock(Block):
 
     def create_components(self, width, height):
         shape_component = RectShapeComponent(self, width, height)
-        render_component = ShapeRenderComponent(shape_component)
-        render_component = SpriteRenderComponent(self, 'mite.png', width, height)
+        # render_component = ShapeRenderComponent(shape_component)
+        # render_component = SpriteRenderComponent(self, 'mite.png', width, height)
+        render_component = AnimationRenderComponent(self, 'testsheet.png')
         physics_component = PhysicsComponent(self)
 
         keyboard_input_component = KeyboardInputComponent(self)

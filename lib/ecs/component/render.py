@@ -25,10 +25,27 @@ class SpriteRenderComponent(RenderComponent):
         print '+=============='
         print self.sprite
         print '+=============='
-        
+
     def draw(self, screen):
         # screen.blit(self.sprite, self.entity.position - Vec2d(int(self.width) / 2, int(self.height) / 2))
         screen.blit(self.sprite, self.entity.position)
+
+class AnimationRenderComponent(RenderComponent):
+    def __init__(self, entity, spritesheet_file):
+        self.entity = entity
+        self.frame = 0
+        self.elapsed_time = 0
+        self.sprite = SpriteRenderComponent.resource_manager.get_spritesheet(spritesheet_file)
+
+    def update(self, delta):
+        self.elapsed_time += delta
+        while self.elapsed_time > 1:
+            self.frame += 1
+            self.frame = self.frame % 2
+            self.elapsed_time -= 1
+
+    def draw(self, screen):
+        screen.blit(self.sprite, self.entity.position, pygame.Rect(self.frame * 64, 0, 64, 64))
 
 class ShapeRenderComponent(RenderComponent):
     def __init__(self, shape_component):
@@ -72,10 +89,4 @@ class PolygonRenderComponent(RenderComponent):
         color=(65, 15, 25)
         self.draw_lines(screen, self.entity[ShapeComponent].get_points())
         # pygame.draw.circle(screen, color, (int(self.entity.position[0]), int(self.entity.position[1])), 3, 3)
-
-class AnimationRenderComponent(RenderComponent):
-    def __init__(self, entity):
-        self.entity = entity
-
-
     
