@@ -41,6 +41,7 @@ class RenderSystem(System):
 
         for entity in self.entities:
             render_component = entity[RenderComponent]
+            render_component.update(delta)
             render_component.draw(self.screen)
 
         self.flip()

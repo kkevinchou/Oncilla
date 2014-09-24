@@ -1,7 +1,6 @@
 import unittest
 import sys, pygame
 
-from oncilla import settings
 
 from lib.vec2d import Vec2d
 from lib.geometry.util import generate_random_polygon, create_polygons
@@ -32,7 +31,6 @@ def set_up_systems():
 
 def run():
     resource_manager = ResourceManager.get_instance()
-    resource_manager.setup(settings.SPRITES_FOLDER)
     system_manager = set_up_systems()
 
     PinnedBlock(0, 300, 600, 50)

@@ -9,6 +9,9 @@ from lib.vec2d import Vec2d
 class RenderComponent(Component):
     component_id = 'RenderComponent'
 
+    def update(self, delta):
+        pass
+
     def draw(self, screen, color=(0, 0, 0)):
         raise NotImplementedError()
 
@@ -19,7 +22,10 @@ class SpriteRenderComponent(RenderComponent):
         self.entity = entity
         self.width, self.height = width, height
         self.sprite = SpriteRenderComponent.resource_manager.get_sprite(sprite_file)
-
+        print '+=============='
+        print self.sprite
+        print '+=============='
+        
     def draw(self, screen):
         # screen.blit(self.sprite, self.entity.position - Vec2d(int(self.width) / 2, int(self.height) / 2))
         screen.blit(self.sprite, self.entity.position)
@@ -66,3 +72,10 @@ class PolygonRenderComponent(RenderComponent):
         color=(65, 15, 25)
         self.draw_lines(screen, self.entity[ShapeComponent].get_points())
         # pygame.draw.circle(screen, color, (int(self.entity.position[0]), int(self.entity.position[1])), 3, 3)
+
+class AnimationRenderComponent(RenderComponent):
+    def __init__(self, entity):
+        self.entity = entity
+
+
+    

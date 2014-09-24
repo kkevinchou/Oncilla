@@ -1,2 +1,6 @@
 class Component(object):
-    pass
+    def get_message_subscriptions(self):
+        return []
+
+    def handle_messages(self):
+        pass
