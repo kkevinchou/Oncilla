@@ -5,3 +5,8 @@ MESSAGE_TYPE = enum(
     'MOVE_ENTITY',
     'INIT_MOVEMENT_PLANNER',
 )
+
+ENTITY_MESSAGE_TYPE = enum(
+    'JUMPED',
+    'LANDED',
+)

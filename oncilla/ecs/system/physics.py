@@ -6,7 +6,7 @@ from lib.ecs.component.shape import ShapeComponent
 from lib.ecs.component.physics import PhysicsComponent, SkipGravityComponent
 from lib.geometry import calculate_separating_vectors
 
-from oncilla.ecs.message_types import MESSAGE_TYPE
+from oncilla.ecs.message_types import MESSAGE_TYPE, ENTITY_MESSAGE_TYPE
 
 class PhysicsSystem(System):
     def __init__(self):
@@ -81,5 +81,14 @@ class PhysicsSystem(System):
 
             if overlap and entity_a[PhysicsComponent].velocity.get_length() > 0:
                 resolution_vector = self.find_resolution_vector(separating_vectors, -1 * entity_a[PhysicsComponent].velocity)
+                resolution_vector_normalized = resolution_vector.normalized()
+
+                if resolution_vector_normalized == Vec2d(0, -1):
+                    entity_a.send_message({
+                        'message_type': ENTITY_MESSAGE_TYPE.LANDED,
+                    })
+                    entity_a[PhysicsComponent].velocity = Vec2d(entity_a[PhysicsComponent].velocity[0], 0)
+                elif resolution_vector_normalized == Vec2d(0, 1):
+                    entity_a[PhysicsComponent].velocity = Vec2d(entity_a[PhysicsComponent].velocity[0], 0)
+
                 entity_a.position += resolution_vector
-                entity_a[PhysicsComponent].velocity = Vec2d(entity_a[PhysicsComponent].velocity[0], 0)

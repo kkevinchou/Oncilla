@@ -42,7 +42,9 @@ class AnimationRenderComponent(RenderComponent):
             self.elapsed_time -= 1
 
     def draw(self, screen):
-        screen.blit(self.sprite, self.entity.position, pygame.Rect(self.frame * 64, 0, 64, 64))
+        width = 64
+        height = 64
+        screen.blit(self.sprite, self.entity.position, pygame.Rect(self.frame * width, 0, width, height))
 
 class ShapeRenderComponent(RenderComponent):
     def __init__(self, shape_component):
