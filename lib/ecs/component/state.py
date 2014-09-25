@@ -1,0 +1,2 @@
+class StateComponent(object):
+    pass
