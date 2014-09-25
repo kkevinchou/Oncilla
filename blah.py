@@ -12,7 +12,8 @@ from lib.resource_manager import ResourceManager
 from oncilla.ecs.system.render import RenderSystem
 from oncilla.ecs.system.physics import PhysicsSystem
 from lib.ecs.system.input import InputSystem
-from oncilla.ecs.entity.block import Block, PinnedBlock, WackBlock, PlayerBlock
+from oncilla.ecs.entity.block import Block, PinnedBlock, WackBlock
+from oncilla.ecs.entity.player import PlayerBlock
 
 def set_up_systems():
     system_manager = SystemManager.get_instance()

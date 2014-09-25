@@ -9,4 +9,5 @@ MESSAGE_TYPE = enum(
 ENTITY_MESSAGE_TYPE = enum(
     'JUMPED',
     'LANDED',
+    'AIRBORNE'
 )

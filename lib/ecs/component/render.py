@@ -6,8 +6,6 @@ from lib.resource_manager import ResourceManager
 from lib.geometry.polygon import Polygon
 from lib.vec2d import Vec2d
 
-from oncilla.ecs.message_types import ENTITY_MESSAGE_TYPE
-
 class RenderComponent(Component):
     component_id = 'RenderComponent'
 
@@ -30,11 +28,6 @@ class SpriteRenderComponent(RenderComponent):
 
 class AnimationRenderComponent(RenderComponent):
     def __init__(self, entity, spritesheet):
-        message_handlers = {
-            ENTITY_MESSAGE_TYPE.JUMPED: self.handle_jump,
-        }
-        super(AnimationRenderComponent, self).__init__(message_handlers)
-
         self.entity = entity
         self.animation = 'idle'
         self.frame = 0
@@ -45,11 +38,6 @@ class AnimationRenderComponent(RenderComponent):
         self.animation = animation
         self.frame = 0
         self.elapsed_time = 0
-
-    def handle_jump(self, message):
-        self.set_animation('jump')
-
-    def handle_land(self, message):
 
     def update(self, delta):
         self.elapsed_time += delta

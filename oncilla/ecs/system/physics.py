@@ -79,6 +79,12 @@ class PhysicsSystem(System):
 
             separating_vectors, overlap = calculate_separating_vectors(shape_a.get_points(), shape_b.get_points())
 
+            if not overlap and entity_a[PhysicsComponent].velocity.get_length() > 0:
+                entity_a.send_message({
+                    'message_type': ENTITY_MESSAGE_TYPE.AIRBORNE,
+                })
+
+
             if overlap and entity_a[PhysicsComponent].velocity.get_length() > 0:
                 resolution_vector = self.find_resolution_vector(separating_vectors, -1 * entity_a[PhysicsComponent].velocity)
                 resolution_vector_normalized = resolution_vector.normalized()

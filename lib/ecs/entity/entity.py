@@ -12,17 +12,16 @@ class Entity(object):
 
     def set_components(self, components):
         for component in components:
-            for message_type in component.get_message_subscriptions():
-                self._message_handlers[message_type].append(component)
+            self.set_component(component)
 
-            self._components[component.component_id] = component
+    def set_component(self, component):
+        self._components[component.component_id] = component
 
     def get(self, component_class):
         return self._components.get(component_class.component_id)
 
     def send_message(self, message):
-        for component in self._message_handlers[message['message_type']]:
-            component.send_message(message)
+        pass
 
     @property
     def position(self):
