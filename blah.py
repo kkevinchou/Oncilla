@@ -34,7 +34,10 @@ def run():
     resource_manager = ResourceManager.get_instance()
     system_manager = set_up_systems()
 
+    from lib.ecs.component.physics import PhysicsComponent
     PinnedBlock(0, 300, 600, 50)
+    # block = Block(0, 200, 50, 50)
+    # block[PhysicsComponent].velocity = Vec2d(100, 0)
     PlayerBlock(100, 0, 64, 64)
 
     # WackBlock(100, 100, [20 * Vec2d(0.5, -0.5), 20 * Vec2d(-0.5, 0.5), 20 * Vec2d(0.5, 1.5), 20 * Vec2d(1.5, 0.5)])

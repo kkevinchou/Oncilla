@@ -35,4 +35,4 @@ if multiple animation events come in, how do we know which one to play on top of
 (in the data file, we can include a priority of animations)
 
 
-GOT STARTED ON ENTITY MESSAGING SYSTEM, WORKED ON JUMP ANIMATION TRIGGERING
+TODO: MAKE CONTROLS FEEL GOOD

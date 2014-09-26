@@ -3,6 +3,7 @@ from lib.ecs.component.physics import PhysicsComponent
 from lib.ecs.component.render import AnimationRenderComponent
 from lib.vec2d import Vec2d
 from lib.command import Command
+from lib.physics.force import TimedForce
 
 from lib.enum import enum
 
@@ -42,16 +43,26 @@ class PlayerStateComponent(StateComponent):
         pass
 
     def move_left(self):
-        self.entity[PhysicsComponent].velocity += Vec2d(-200, 0)
+        self.entity[PhysicsComponent].movement_velocity += Vec2d(-200, 0)
+        # self.entity[PhysicsComponent].velocity += Vec2d(-200, 0)
 
     def move_left_stop(self):
-        self.entity[PhysicsComponent].velocity += Vec2d(-200, 0)
+        self.entity[PhysicsComponent].movement_velocity += Vec2d(200, 0)
+        if self.state_id != STATE_ID.AIRBORNE:
+            if self.entity[PhysicsComponent].velocity[0] > -200:
+                self.entity[PhysicsComponent].velocity = Vec2d(-200, 0)
+        # self.entity[PhysicsComponent].forces['DriftForce'] = TimedForce(Vec2d(-500, 0), 0.1)
 
     def move_right(self):
-        self.entity[PhysicsComponent].velocity += Vec2d(200, 0)
+        self.entity[PhysicsComponent].movement_velocity += Vec2d(200, 0)
+        # self.entity[PhysicsComponent].velocity += Vec2d(200, 0)
 
     def move_right_stop(self):
-        self.entity[PhysicsComponent].velocity += Vec2d(200, 0)
+        self.entity[PhysicsComponent].movement_velocity += Vec2d(-200, 0)
+        if self.state_id != STATE_ID.AIRBORNE:
+            if self.entity[PhysicsComponent].velocity[0] < 200:
+                self.entity[PhysicsComponent].velocity = Vec2d(200, 0)
+        # self.entity[PhysicsComponent].forces['DriftForce'] = TimedForce(Vec2d(500, 0), 0.1)
 
     def send_message(self, message):
         if message['message_type'] == ENTITY_MESSAGE_TYPE.LANDED:
@@ -76,7 +87,7 @@ class IdlePlayerStateComponent(PlayerStateComponent):
     state_id = STATE_ID.IDLE
 
     def jump(self):
-        self.entity[PhysicsComponent].velocity += Vec2d(0, -450)
+        self.entity[PhysicsComponent].velocity = Vec2d(0, -450)
         self.entity[AnimationRenderComponent].set_animation('jump')
         self.entity.set_component(AirbornePlayerStateComponent(self.entity))
 

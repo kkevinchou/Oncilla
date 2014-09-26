@@ -5,6 +5,7 @@ from lib.ecs.system.system import System
 from lib.ecs.component.shape import ShapeComponent
 from lib.ecs.component.physics import PhysicsComponent, SkipGravityComponent
 from lib.geometry import calculate_separating_vectors
+from lib.physics.force import Force
 
 from oncilla.ecs.message_types import MESSAGE_TYPE, ENTITY_MESSAGE_TYPE
 
@@ -16,12 +17,17 @@ class PhysicsSystem(System):
             MESSAGE_TYPE.CREATE_ENTITY: self.handle_create_entity,
         }
 
+        self.gravity_acceleration = Vec2d(0, 1200)
+        self.coefficient_of_friction = 1
+
         super(PhysicsSystem, self).__init__(message_handlers)
 
     def handle_create_entity(self, message):
         entity = message['entity']
         if entity.get(ShapeComponent) and entity.get(PhysicsComponent):
             self.entities.append(message['entity'])
+            if not entity.get(SkipGravityComponent):
+                entity[PhysicsComponent].forces['Gravity'] = Force(entity[PhysicsComponent].mass * self.gravity_acceleration)
 
     def find_resolution_vector(self, separating_vectors, correction_vector):
         # minimum_correction = 99999
@@ -55,20 +61,17 @@ class PhysicsSystem(System):
 
         for entity in self.entities:
             physics_component = entity[PhysicsComponent]
+            physics_component.update_forces(delta)
 
-            if entity.get(SkipGravityComponent):
-                if 'Gravity' in physics_component.forces:
-                    physics_component.forces.pop('Gravity')
-            else:
-                physics_component.forces['Gravity'] = Vec2d(0, 1200)
+            net_force = physics_component.get_net_force()
 
-            sum_forces = sum([force for force in physics_component.forces.itervalues()])
-            if sum_forces == 0:
-                sum_forces = Vec2d(0, 0)
+            # TODO: There's bobbing when we update position, then velocity, then acceleration
+            # (which is the right order to do it, i think? do more research on that, then
+            # fix the bobbing if necessary)
 
-            physics_component.acceleration = sum_forces / physics_component.mass
+            physics_component.acceleration = net_force / physics_component.mass
             physics_component.velocity += delta * physics_component.acceleration
-            entity.position += delta * physics_component.velocity
+            entity.position += delta * (physics_component.velocity + physics_component.movement_velocity)
 
         for (entity_a, entity_b) in itertools.product(self.entities, repeat=2):
             if entity_a == entity_b:
@@ -84,17 +87,42 @@ class PhysicsSystem(System):
                     'message_type': ENTITY_MESSAGE_TYPE.AIRBORNE,
                 })
 
+            entity_a_total_velocity = entity_a[PhysicsComponent].get_total_velocity()
 
-            if overlap and entity_a[PhysicsComponent].velocity.get_length() > 0:
-                resolution_vector = self.find_resolution_vector(separating_vectors, -1 * entity_a[PhysicsComponent].velocity)
+            if entity_a_total_velocity.get_length() > 0:
+                print entity_a[PhysicsComponent].velocity, entity_a[PhysicsComponent].movement_velocity
+                if entity_a_total_velocity[0] != 0:
+                    pass
+
+            if overlap and entity_a_total_velocity.get_length() > 0:
+                resolution_vector = self.find_resolution_vector(separating_vectors, -1 * entity_a_total_velocity)
                 resolution_vector_normalized = resolution_vector.normalized()
 
                 if resolution_vector_normalized == Vec2d(0, -1):
                     entity_a.send_message({
                         'message_type': ENTITY_MESSAGE_TYPE.LANDED,
                     })
+
                     entity_a[PhysicsComponent].velocity = Vec2d(entity_a[PhysicsComponent].velocity[0], 0)
+                    entity_a_total_velocity = entity_a[PhysicsComponent].get_total_velocity()
+
+                    if entity_a[PhysicsComponent].velocity[0] > 0:
+                        direction_multiplier = -1
+                    elif entity_a[PhysicsComponent].velocity[0] < 0:
+                        direction_multiplier = 1
+                    else:
+                        direction_multiplier = 0
+
+                    if direction_multiplier != 0:
+                        entity_a[PhysicsComponent].forces['Friction'] = Force(
+                            self.coefficient_of_friction *
+                            entity_a[PhysicsComponent].mass *
+                            Vec2d(direction_multiplier * entity_a[PhysicsComponent].get_net_force()[1], 0)
+                        )
+                    elif 'Friction' in entity_a[PhysicsComponent].forces:
+                        entity_a[PhysicsComponent].forces.pop('Friction')
+
                 elif resolution_vector_normalized == Vec2d(0, 1):
-                    entity_a[PhysicsComponent].velocity = Vec2d(entity_a[PhysicsComponent].velocity[0], 0)
+                    entity_a_total_velocity = Vec2d(entity_a_total_velocity[0], 0)
 
                 entity_a.position += resolution_vector
