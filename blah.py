@@ -23,9 +23,9 @@ def set_up_systems():
     physics_system = PhysicsSystem()
 
     system_manager.init([
-        render_system,
-        physics_system,
         input_system,
+        physics_system,
+        render_system,
     ])
 
     return system_manager
@@ -38,7 +38,7 @@ def run():
     PinnedBlock(0, 300, 600, 50)
     # block = Block(0, 200, 50, 50)
     # block[PhysicsComponent].velocity = Vec2d(100, 0)
-    PlayerBlock(100, 0, 64, 64)
+    PlayerBlock(300, 0, 64, 64)
 
     # WackBlock(100, 100, [20 * Vec2d(0.5, -0.5), 20 * Vec2d(-0.5, 0.5), 20 * Vec2d(0.5, 1.5), 20 * Vec2d(1.5, 0.5)])
     # WackBlock(100, 100, [20 * Vec2d(1, 0), 20 * Vec2d(0, 1), 20 * Vec2d(1, 2), 20 * Vec2d(2, 1)])

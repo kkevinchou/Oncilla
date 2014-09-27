@@ -18,7 +18,7 @@ class PhysicsSystem(System):
         }
 
         self.gravity_acceleration = Vec2d(0, 1200)
-        self.coefficient_of_friction = 1
+        self.coefficient_of_friction = 2
 
         super(PhysicsSystem, self).__init__(message_handlers)
 
@@ -71,7 +71,7 @@ class PhysicsSystem(System):
 
             physics_component.acceleration = net_force / physics_component.mass
             physics_component.velocity += delta * physics_component.acceleration
-            entity.position += delta * (physics_component.velocity + physics_component.movement_velocity)
+            entity.position += delta * physics_component.get_total_velocity()
 
         for (entity_a, entity_b) in itertools.product(self.entities, repeat=2):
             if entity_a == entity_b:
@@ -90,8 +90,8 @@ class PhysicsSystem(System):
             entity_a_total_velocity = entity_a[PhysicsComponent].get_total_velocity()
 
             if entity_a_total_velocity.get_length() > 0:
-                print entity_a[PhysicsComponent].velocity, entity_a[PhysicsComponent].movement_velocity
-                if entity_a_total_velocity[0] != 0:
+                if entity_a[PhysicsComponent].movement_velocity != Vec2d(0, 0):
+                    # print entity_a[PhysicsComponent].velocity, entity_a[PhysicsComponent].movement_velocity
                     pass
 
             if overlap and entity_a_total_velocity.get_length() > 0:
@@ -126,3 +126,8 @@ class PhysicsSystem(System):
                     entity_a_total_velocity = Vec2d(entity_a_total_velocity[0], 0)
 
                 entity_a.position += resolution_vector
+            elif not overlap:
+                if 'Friction' in entity_a[PhysicsComponent].forces:
+                    entity_a[PhysicsComponent].velocity -= delta * entity_a[PhysicsComponent].forces['Friction'].vector
+                    entity_a.position -= delta * delta * entity_a[PhysicsComponent].velocity
+                    entity_a[PhysicsComponent].forces.pop('Friction')
