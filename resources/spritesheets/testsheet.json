@@ -5,7 +5,7 @@
         "width": 64,
         "height": 64,
         "num_frames": 2,
-        "seconds_per_frame": 1
+        "seconds_per_frame": 0.1
     },
     "idle": {
         "x": 0,

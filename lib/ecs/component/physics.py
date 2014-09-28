@@ -54,8 +54,15 @@ class PhysicsComponent(Component):
         for force in expired_forces:
             self.forces.pop(force)
 
-    def get_net_force(self):
-        return sum([force.vector for force in self.forces.itervalues()] or [Vec2d(0, 0)])
+    def get_net_force(self, exclude_forces=None):
+        if exclude_forces is None
+            exclude_forces = []
+
+        return (sum([force.vector for force_name, force in self.forces.iteritems()
+            if force_name not in exclude_forces] or [Vec2d(0, 0)]))
 
 class SkipGravityComponent(Component):
-    component_id = 'SkipGravity'
+    component_id = 'SkipGravityComponent'
+
+class ImmovableComponent(Component):
+    component_id = 'ImmovableComponent'

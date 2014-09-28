@@ -1,5 +1,6 @@
 import unittest
 import sys, pygame
+import cProfile, pstats, StringIO
 
 from oncilla import settings
 from lib.vec2d import Vec2d
@@ -14,6 +15,8 @@ from oncilla.ecs.system.physics import PhysicsSystem
 from lib.ecs.system.input import InputSystem
 from oncilla.ecs.entity.block import Block, PinnedBlock, WackBlock
 from oncilla.ecs.entity.player import PlayerBlock
+
+ENABLE_PROFILING = True
 
 def set_up_systems():
     system_manager = SystemManager.get_instance()
@@ -46,11 +49,23 @@ def run():
     clock = pygame.time.Clock()
     quit = False
 
+    if ENABLE_PROFILING:
+        pr = cProfile.Profile()
+        pr.enable()
+
     while True:
         if system_manager.update(1 / float(settings.FRAMES_PER_SECOND)) is False:
-            sys.exit()
+            break
 
         clock.tick(settings.FRAMES_PER_SECOND)
+
+    if ENABLE_PROFILING:
+        pr.disable()
+        s = StringIO.StringIO()
+        sortby = 'cumulative'
+        ps = pstats.Stats(pr, stream=s).sort_stats(sortby)
+        ps.print_stats()
+        print s.getvalue()
 
 if __name__ == '__main__':
     run()

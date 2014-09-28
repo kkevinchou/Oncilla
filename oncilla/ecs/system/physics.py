@@ -3,7 +3,7 @@ import itertools
 from lib.vec2d import Vec2d
 from lib.ecs.system.system import System
 from lib.ecs.component.shape import ShapeComponent
-from lib.ecs.component.physics import PhysicsComponent, SkipGravityComponent
+from lib.ecs.component.physics import PhysicsComponent, SkipGravityComponent, ImmovableComponent
 from lib.geometry import calculate_separating_vectors
 from lib.physics.force import Force
 
@@ -77,24 +77,23 @@ class PhysicsSystem(System):
             if entity_a == entity_b:
                 continue
 
+            if entity_a.get(ImmovableComponent):
+                continue
+
             shape_a = entity_a[ShapeComponent]
             shape_b = entity_b[ShapeComponent]
 
             separating_vectors, overlap = calculate_separating_vectors(shape_a.get_points(), shape_b.get_points())
 
-            if not overlap and entity_a[PhysicsComponent].velocity.get_length() > 0:
+            # TODO: this should only be sent after we check against ALL entities
+            if not overlap:
                 entity_a.send_message({
                     'message_type': ENTITY_MESSAGE_TYPE.AIRBORNE,
                 })
 
             entity_a_total_velocity = entity_a[PhysicsComponent].get_total_velocity()
 
-            if entity_a_total_velocity.get_length() > 0:
-                if entity_a[PhysicsComponent].movement_velocity != Vec2d(0, 0):
-                    # print entity_a[PhysicsComponent].velocity, entity_a[PhysicsComponent].movement_velocity
-                    pass
-
-            if overlap and entity_a_total_velocity.get_length() > 0:
+            if overlap:
                 resolution_vector = self.find_resolution_vector(separating_vectors, -1 * entity_a_total_velocity)
                 resolution_vector_normalized = resolution_vector.normalized()
 

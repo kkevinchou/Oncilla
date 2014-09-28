@@ -5,7 +5,7 @@ from lib.ecs.component.shape import RectShapeComponent, DefinedShapeComponent
 from lib.ecs.component.render import ShapeRenderComponent, PolygonRenderComponent, SpriteRenderComponent
 from lib.ecs.system_manager import SystemManager
 from lib.ecs.entity.entity import Entity
-from lib.ecs.component.physics import PhysicsComponent, SkipGravityComponent
+from lib.ecs.component.physics import PhysicsComponent, SkipGravityComponent, ImmovableComponent
 
 from oncilla.ecs.message_types import MESSAGE_TYPE
 
@@ -38,8 +38,9 @@ class PinnedBlock(Block):
         render_component = ShapeRenderComponent(shape_component)
         physics_component = PhysicsComponent(self)
         skip_gravity_component = SkipGravityComponent()
+        immovable_component = ImmovableComponent()
 
-        return [shape_component, render_component, physics_component, skip_gravity_component]
+        return [shape_component, render_component, physics_component, skip_gravity_component, immovable_component]
 
 class WackBlock(Entity):
     system_manager = SystemManager.get_instance()
