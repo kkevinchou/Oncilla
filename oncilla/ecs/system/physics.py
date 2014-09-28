@@ -18,7 +18,7 @@ class PhysicsSystem(System):
         }
 
         self.gravity_acceleration = Vec2d(0, 1200)
-        self.coefficient_of_friction = 2
+        self.coefficient_of_friction = 1.5
 
         super(PhysicsSystem, self).__init__(message_handlers)
 
@@ -63,14 +63,32 @@ class PhysicsSystem(System):
             physics_component = entity[PhysicsComponent]
             physics_component.update_forces(delta)
 
-            net_force = physics_component.get_net_force()
-
             # TODO: There's bobbing when we update position, then velocity, then acceleration
             # (which is the right order to do it, i think? do more research on that, then
             # fix the bobbing if necessary)
 
-            physics_component.acceleration = net_force / physics_component.mass
-            physics_component.velocity += delta * physics_component.acceleration
+            if 'Friction' in physics_component.forces:
+                friction_force = physics_component.forces['Friction']
+                velocity_delta_due_to_friction = delta * friction_force.vector / physics_component.mass
+
+                non_friction_forces = physics_component.get_net_force(exclude_forces=['Friction'])
+                non_friction_accel = non_friction_forces / physics_component.mass
+                velocity_without_friction = delta * non_friction_accel + physics_component.velocity
+                velocity_with_friction = velocity_without_friction + velocity_delta_due_to_friction
+
+                # friction was overly aggressive, time to undo some friction
+                if ((velocity_without_friction[0] < 0 and velocity_with_friction[0] >= 0) or
+                  (velocity_without_friction[0] > 0 and velocity_with_friction[0] <= 0)):
+                    physics_component.velocity = velocity_with_friction
+                    physics_component.velocity = Vec2d(0, physics_component.velocity[1])
+                    physics_component.forces.pop('Friction')
+                else:                
+                    physics_component.velocity = velocity_with_friction
+            else:
+                net_force = physics_component.get_net_force()
+                physics_component.acceleration = net_force / physics_component.mass
+                physics_component.velocity += delta * physics_component.acceleration
+            
             entity.position += delta * physics_component.get_total_velocity()
 
         for (entity_a, entity_b) in itertools.product(self.entities, repeat=2):
