@@ -52,9 +52,19 @@ class AnimationRenderComponent(RenderComponent):
     def draw(self, screen):
         width = self.metadata[self.animation]['width']
         height = self.metadata[self.animation]['height']
+
+        entity_width = self.entity[ShapeComponent].width
+        entity_height = self.entity[ShapeComponent].height
         y = self.metadata[self.animation]['y']
 
-        screen.blit(self.sprite, self.entity.position, pygame.Rect(self.frame * width, y, width, height))
+        x_scale = entity_width / 1.0 / width
+        y_scale = entity_height / 1.0 / height
+
+        # these frame images should be cached (either at run time, or during init)
+        frame_image = pygame.Surface((width, height))
+        frame_image.blit(self.sprite, (0, 0), pygame.Rect(self.frame * width, y, width, height))
+
+        screen.blit(pygame.transform.scale(frame_image, (entity_width, entity_height)), self.entity.position)
 
 class ShapeRenderComponent(RenderComponent):
     def __init__(self, shape_component):

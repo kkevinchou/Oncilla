@@ -38,7 +38,7 @@ def run():
     system_manager = set_up_systems()
 
     from lib.ecs.component.physics import PhysicsComponent
-    PinnedBlock(0, 300, 600, 50)
+    PinnedBlock(100, 300, 600, 50)
     # block = Block(0, 200, 50, 50)
     # block[PhysicsComponent].velocity = Vec2d(100, 0)
     PlayerBlock(300, 0, 64, 64)
