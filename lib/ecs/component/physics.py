@@ -55,7 +55,7 @@ class PhysicsComponent(Component):
             self.forces.pop(force)
 
     def get_net_force(self, exclude_forces=None):
-        if exclude_forces is None
+        if exclude_forces is None:
             exclude_forces = []
 
         return (sum([force.vector for force_name, force in self.forces.iteritems()
