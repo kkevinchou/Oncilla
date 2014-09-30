@@ -78,7 +78,7 @@ class PhysicsSystem(System):
                     physics_component.velocity = velocity_with_friction
                     physics_component.velocity = Vec2d(0, physics_component.velocity[1])
                     physics_component.forces.pop('Friction')
-                else:                
+                else:
                     physics_component.velocity = velocity_with_friction
             else:
                 net_force = physics_component.get_net_force()
@@ -89,11 +89,11 @@ class PhysicsSystem(System):
 
         for entity_a in self.entities:
             overlaps_another_entity = False
+            if entity_a.get(ImmovableComponent):
+                continue
+
             for entity_b in self.entities:
                 if entity_a == entity_b:
-                    continue
-
-                if entity_a.get(ImmovableComponent):
                     continue
 
                 shape_a = entity_a[ShapeComponent]
@@ -132,7 +132,6 @@ class PhysicsSystem(System):
                             entity_a[PhysicsComponent].forces.pop('Friction')
 
                     elif resolution_vector_normalized == Vec2d(0, 1):
-                        print 'BLOCK'
                         entity_a[PhysicsComponent].velocity = Vec2d(entity_a[PhysicsComponent].velocity[0], 0)
 
                     entity_a.position += resolution_vector
