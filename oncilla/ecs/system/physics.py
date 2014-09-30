@@ -63,10 +63,6 @@ class PhysicsSystem(System):
             physics_component = entity[PhysicsComponent]
             physics_component.update_forces(delta)
 
-            # TODO: There's bobbing when we update position, then velocity, then acceleration
-            # (which is the right order to do it, i think? do more research on that, then
-            # fix the bobbing if necessary)
-
             if 'Friction' in physics_component.forces:
                 friction_force = physics_component.forces['Friction']
                 velocity_delta_due_to_friction = delta * friction_force.vector / physics_component.mass
@@ -91,60 +87,64 @@ class PhysicsSystem(System):
             
             entity.position += delta * physics_component.get_total_velocity()
 
-        for (entity_a, entity_b) in itertools.product(self.entities, repeat=2):
-            if entity_a == entity_b:
-                continue
+        for entity_a in self.entities:
+            overlaps_another_entity = False
+            for entity_b in self.entities:
+                if entity_a == entity_b:
+                    continue
 
-            if entity_a.get(ImmovableComponent):
-                continue
+                if entity_a.get(ImmovableComponent):
+                    continue
 
-            shape_a = entity_a[ShapeComponent]
-            shape_b = entity_b[ShapeComponent]
+                shape_a = entity_a[ShapeComponent]
+                shape_b = entity_b[ShapeComponent]
 
-            separating_vectors, overlap = calculate_separating_vectors(shape_a.get_points(), shape_b.get_points())
+                separating_vectors, overlap = calculate_separating_vectors(shape_a.get_points(), shape_b.get_points())
+                entity_a_total_velocity = entity_a[PhysicsComponent].get_total_velocity()
 
-            # TODO: this should only be sent after we check against ALL entities
-            if not overlap:
+                if overlap:
+                    overlaps_another_entity = True
+                    resolution_vector = self.find_resolution_vector(separating_vectors, -1 * entity_a_total_velocity)
+                    resolution_vector_normalized = resolution_vector.normalized()
+
+                    if resolution_vector_normalized == Vec2d(0, -1):
+                        entity_a.send_message({
+                            'message_type': ENTITY_MESSAGE_TYPE.LANDED,
+                        })
+
+                        entity_a[PhysicsComponent].velocity = Vec2d(entity_a[PhysicsComponent].velocity[0], 0)
+
+                        if entity_a[PhysicsComponent].velocity[0] > 0:
+                            direction_multiplier = -1
+                        elif entity_a[PhysicsComponent].velocity[0] < 0:
+                            direction_multiplier = 1
+                        else:
+                            direction_multiplier = 0
+
+                        if direction_multiplier != 0:
+                            entity_a[PhysicsComponent].forces['Friction'] = Force(
+                                self.coefficient_of_friction *
+                                entity_a[PhysicsComponent].mass *
+                                Vec2d(direction_multiplier * entity_a[PhysicsComponent].get_net_force()[1], 0),
+                                source=entity_b
+                            )
+                        elif 'Friction' in entity_a[PhysicsComponent].forces:
+                            entity_a[PhysicsComponent].forces.pop('Friction')
+
+                    elif resolution_vector_normalized == Vec2d(0, 1):
+                        print 'BLOCK'
+                        entity_a[PhysicsComponent].velocity = Vec2d(entity_a[PhysicsComponent].velocity[0], 0)
+
+                    entity_a.position += resolution_vector
+                elif not overlap:
+                    if 'Friction' in entity_a[PhysicsComponent].forces:
+                        friction_force = entity_a[PhysicsComponent].forces['Friction']
+                        if friction_force.source == entity_b:
+                            # entity_a[PhysicsComponent].velocity -= delta * entity_a[PhysicsComponent].forces['Friction'].vector
+                            # entity_a.position -= delta * delta * entity_a[PhysicsComponent].velocity
+                            entity_a[PhysicsComponent].forces.pop('Friction')
+
+            if not overlaps_another_entity:
                 entity_a.send_message({
                     'message_type': ENTITY_MESSAGE_TYPE.AIRBORNE,
                 })
-
-            entity_a_total_velocity = entity_a[PhysicsComponent].get_total_velocity()
-
-            if overlap:
-                resolution_vector = self.find_resolution_vector(separating_vectors, -1 * entity_a_total_velocity)
-                resolution_vector_normalized = resolution_vector.normalized()
-
-                if resolution_vector_normalized == Vec2d(0, -1):
-                    entity_a.send_message({
-                        'message_type': ENTITY_MESSAGE_TYPE.LANDED,
-                    })
-
-                    entity_a[PhysicsComponent].velocity = Vec2d(entity_a[PhysicsComponent].velocity[0], 0)
-                    entity_a_total_velocity = entity_a[PhysicsComponent].get_total_velocity()
-
-                    if entity_a[PhysicsComponent].velocity[0] > 0:
-                        direction_multiplier = -1
-                    elif entity_a[PhysicsComponent].velocity[0] < 0:
-                        direction_multiplier = 1
-                    else:
-                        direction_multiplier = 0
-
-                    if direction_multiplier != 0:
-                        entity_a[PhysicsComponent].forces['Friction'] = Force(
-                            self.coefficient_of_friction *
-                            entity_a[PhysicsComponent].mass *
-                            Vec2d(direction_multiplier * entity_a[PhysicsComponent].get_net_force()[1], 0)
-                        )
-                    elif 'Friction' in entity_a[PhysicsComponent].forces:
-                        entity_a[PhysicsComponent].forces.pop('Friction')
-
-                elif resolution_vector_normalized == Vec2d(0, 1):
-                    entity_a_total_velocity = Vec2d(entity_a_total_velocity[0], 0)
-
-                entity_a.position += resolution_vector
-            elif not overlap:
-                if 'Friction' in entity_a[PhysicsComponent].forces:
-                    entity_a[PhysicsComponent].velocity -= delta * entity_a[PhysicsComponent].forces['Friction'].vector
-                    entity_a.position -= delta * delta * entity_a[PhysicsComponent].velocity
-                    entity_a[PhysicsComponent].forces.pop('Friction')

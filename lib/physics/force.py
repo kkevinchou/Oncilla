@@ -1,8 +1,9 @@
 from lib.vec2d import Vec2d
 
 class Force(object):
-    def __init__(self, vector):
+    def __init__(self, vector, source=None):
         self._vector = vector.copy()
+        self.source = source
 
     def update(self, delta):
         return True
