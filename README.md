@@ -34,3 +34,4 @@ the data file should convey
 if multiple animation events come in, how do we know which one to play on top of another?
 (in the data file, we can include a priority of animations)
 
+TODO: render animation, use cached animations in resource manager

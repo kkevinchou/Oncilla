@@ -27,44 +27,38 @@ class SpriteRenderComponent(RenderComponent):
         screen.blit(self.sprite, self.entity.position)
 
 class AnimationRenderComponent(RenderComponent):
-    def __init__(self, entity, spritesheet):
+    resource_manager = ResourceManager.get_instance()
+
+    def __init__(self, entity, animation_sheet, width, height):
         self.entity = entity
-        self.animation = 'idle'
         self.frame = 0
         self.elapsed_time = 0
-        self.sprite, self.metadata = SpriteRenderComponent.resource_manager.get_spritesheet(spritesheet)
+        self.animation_sheet = animation_sheet
+        self.width, self.height = width, height
+
+        self.set_animation('idle')
 
     def set_animation(self, animation):
-        self.animation = animation
+        self.animation_frames, self.seconds_per_frame = self.resource_manager.get_animations(
+            self.animation_sheet,
+            animation,
+            self.width,
+            self.height
+        )
         self.frame = 0
         self.elapsed_time = 0
 
     def update(self, delta):
         self.elapsed_time += delta
-        num_frames = self.metadata[self.animation]['num_frames']
-        seconds_per_frame = self.metadata[self.animation]['seconds_per_frame']
 
-        while self.elapsed_time > seconds_per_frame:
+        # TODO: can clean this up
+        while self.elapsed_time > self.seconds_per_frame:
             self.frame += 1
-            self.frame = self.frame % num_frames
-            self.elapsed_time -= seconds_per_frame
+            self.frame = self.frame % len(self.animation_frames)
+            self.elapsed_time -= self.seconds_per_frame
 
     def draw(self, screen):
-        width = self.metadata[self.animation]['width']
-        height = self.metadata[self.animation]['height']
-
-        entity_width = self.entity[ShapeComponent].width
-        entity_height = self.entity[ShapeComponent].height
-        y = self.metadata[self.animation]['y']
-
-        x_scale = entity_width / 1.0 / width
-        y_scale = entity_height / 1.0 / height
-
-        # these frame images should be cached (either at run time, or during init)
-        frame_image = pygame.Surface((width, height))
-        frame_image.blit(self.sprite, (0, 0), pygame.Rect(self.frame * width, y, width, height))
-
-        screen.blit(pygame.transform.scale(frame_image, (entity_width, entity_height)), self.entity.position)
+        screen.blit(self.animation_frames[self.frame], self.entity.position)
 
 class ShapeRenderComponent(RenderComponent):
     def __init__(self, shape_component):

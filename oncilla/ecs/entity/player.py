@@ -35,7 +35,7 @@ class PlayerBlock(Entity):
 
     def create_components(self, width, height):
         shape_component = RectShapeComponent(self, width, height)
-        render_component = AnimationRenderComponent(self, 'testsheet')
+        render_component = AnimationRenderComponent(self, 'testsheet', width, height)
         physics_component = PhysicsComponent(self)
         state_component = IdlePlayerStateComponent(self)
 
