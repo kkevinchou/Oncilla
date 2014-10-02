@@ -51,11 +51,10 @@ class AnimationRenderComponent(RenderComponent):
     def update(self, delta):
         self.elapsed_time += delta
 
-        # TODO: can clean this up
-        while self.elapsed_time > self.seconds_per_frame:
-            self.frame += 1
-            self.frame = self.frame % len(self.animation_frames)
-            self.elapsed_time -= self.seconds_per_frame
+        iterations = int(self.elapsed_time // self.seconds_per_frame)
+        self.frame += iterations
+        self.frame %= len(self.animation_frames)
+        self.elapsed_time %= self.seconds_per_frame
 
     def draw(self, screen):
         screen.blit(self.animation_frames[self.frame], self.entity.position)
