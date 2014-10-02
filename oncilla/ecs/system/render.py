@@ -6,9 +6,9 @@ from lib.vec2d import Vec2d
 from lib.ecs.component.render import RenderComponent
 
 from oncilla.ecs.message_types import MESSAGE_TYPE
-from oncilla.settings import RENDER_FRAMES_PER_SECOND, PRINT_FPS
+from oncilla.settings import FRAMES_PER_SECOND, PRINT_FPS
 
-SECONDS_PER_FRAME = 1.0 / RENDER_FRAMES_PER_SECOND
+SECONDS_PER_FRAME = 1.0 / FRAMES_PER_SECOND
 SECONDS_PER_FPS_DISPLAY = 0.2
 
 class RenderSystem(System):

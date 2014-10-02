@@ -60,7 +60,6 @@ def run():
     accumulated_time = 0
     current_time = time.time()
     last_render_time = 0
-    sec_per_render = 1 / float(settings.FRAMES_PER_SECOND)
     game_over = False
 
     while not game_over:
@@ -77,9 +76,6 @@ def run():
             accumulated_time -= fixed_update_dt
             if system_manager.update(fixed_update_dt) is False:
                 game_over = True
-
-        if current_time - last_render_time > sec_per_render:
-            last_render_time = current_time
 
     if ENABLE_PROFILING:
         pr.disable()
