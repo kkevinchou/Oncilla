@@ -48,43 +48,38 @@ def run():
     # WackBlock(100, 100, [20 * Vec2d(0.5, -0.5), 20 * Vec2d(-0.5, 0.5), 20 * Vec2d(0.5, 1.5), 20 * Vec2d(1.5, 0.5)])
     # WackBlock(100, 100, [20 * Vec2d(1, 0), 20 * Vec2d(0, 1), 20 * Vec2d(1, 2), 20 * Vec2d(2, 1)])
 
-    clock = pygame.time.Clock()
+    # clock = pygame.time.Clock()
     quit = False
 
     if ENABLE_PROFILING:
         pr = cProfile.Profile()
         pr.enable()
 
-    while True:
-        if system_manager.update(1 / float(settings.FRAMES_PER_SECOND)) is False:
-            break
+    max_frame_time = 0.25
+    fixed_update_dt = 0.01
+    accumulated_time = 0
+    current_time = time.time()
+    last_render_time = 0
+    sec_per_render = 1 / float(settings.FRAMES_PER_SECOND)
+    game_over = False
 
-        clock.tick(settings.FRAMES_PER_SECOND)
+    while not game_over:
+        new_time = time.time()
+        frame_time = new_time - current_time
+        current_time = new_time
 
+        if frame_time >= max_frame_time:
+            frame_time = max_frame_time
 
-    # max_frame_time = 0.25
-    # fixed_update_dt = 0.01
-    # accumulated_time = 0
-    # current_time = time.time()
-    # last_render_time = 0
-    # sec_per_render = 1 / float(settings.FRAMES_PER_SECOND)
+        accumulated_time += frame_time
 
-    # while True:
-    #     new_time = time.time()
-    #     frame_time = new_time - current_time
-    #     current_time = new_time
+        while accumulated_time >= fixed_update_dt:
+            accumulated_time -= fixed_update_dt
+            if system_manager.update(fixed_update_dt) is False:
+                game_over = True
 
-    #     if frame_time >= max_frame_time:
-    #         frame_time = max_frame_time
-
-    #     accumulated_time += frame_time
-
-    #     while accumulated_time >= fixed_update_dt:
-    #         accumulated_time -= fixed_update_dt
-    #         system_manager.update(fixed_update_dt)
-
-    #     if current_time - last_render_time > sec_per_render:
-    #         last_render_time = current_time
+        if current_time - last_render_time > sec_per_render:
+            last_render_time = current_time
 
     if ENABLE_PROFILING:
         pr.disable()
