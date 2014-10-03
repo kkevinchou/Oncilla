@@ -39,7 +39,7 @@ class AnimationRenderComponent(RenderComponent):
         self.set_animation('idle')
 
     def set_animation(self, animation):
-        self.animation_frames, self.seconds_per_frame = self.resource_manager.get_animations(
+        self.animation_frames, self.seconds_per_frame = self.resource_manager.get_animation(
             self.animation_sheet,
             animation,
             self.width,

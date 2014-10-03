@@ -71,7 +71,7 @@ class ResourceManager(object):
 
             self.cached_animations[animation_sheet][animation]['{}x{}'.format(width, height)] = animation_frames, metadata[animation]['seconds_per_frame']
 
-    def get_animations(self, animation_sheet, animation, width, height):
+    def get_animation(self, animation_sheet, animation, width, height):
         if not self.cached_animations[animation_sheet][animation].get('{}x{}'.format(width, height)):
             _, metadata = self.animation_sheets[animation_sheet]
             default_width = metadata[animation]["width"]
