@@ -9,13 +9,20 @@ class ResourceManager(object):
     instance = None
 
     def __init__(self):
-        self.sprites_folder = None
-        self.sprites = {}
-        self.cached_animations = defaultdict(lambda: defaultdict(dict))
-        self.animation_sheets = {}
+        # Sprites
         self.sprites_folder = settings.SPRITES_FOLDER
-        self.animation_sheets_folder = settings.ANIMATION_SHEETS_FOLDER
+        self.sprites = {}
 
+        # Animations
+        self.animation_sheets_folder = settings.ANIMATION_SHEETS_FOLDER
+        self.animation_cache = defaultdict(lambda: defaultdict(dict))
+        self.animation_data = {}
+
+        # Audio
+        self.audio_folder = settings.AUDIO_FOLDER
+        self.audio = {}
+
+        # Loading
         self.load_animation_sheets()
         self.load_sprites()
 
@@ -26,13 +33,21 @@ class ResourceManager(object):
 
         return ResourceManager.instance
 
+    def load_audio(self):
+        print ' *** [ResourceManager :: Loading Audio]'
+        for f in os.listdir(self.audio_folder):
+            audio_path = os.path.join(self.audio_folder, f)
+            if os.path.isfile(audio_path):
+                self.audio[f] = audio_path
+                print ' *** Loaded {}'.format(audio_path)
+
     def load_sprites(self):
         print ' *** [ResourceManager :: Loading Sprites]'
         for f in os.listdir(self.sprites_folder):
             sprite_path = os.path.join(self.sprites_folder, f)
             if os.path.isfile(sprite_path):
-                print ' *** Loaded {}'.format(sprite_path)
                 self.sprites[f] = pygame.image.load(sprite_path)
+                print ' *** Loaded {}'.format(sprite_path)
 
     def load_animation_sheets(self):
         print ' *** [ResourceManager :: Loading Animations]'
@@ -50,13 +65,10 @@ class ResourceManager(object):
                 else:
                     raise Exception('Exception in ResourceManager: json file for {} not found'.format(filename + extension))
 
-                self.animation_sheets[filename] = sheet, metadata
+                self.animation_data[filename] = sheet, metadata
                 self.setup_animation(filename, sheet, metadata)
 
                 print ' *** Loaded {}'.format(file_path)
-
-    def get_sprite(self, name):
-        return self.sprites.get(name)
 
     def setup_animation(self, animation_sheet, sheet, metadata):
         for animation, animation_data in metadata.iteritems():
@@ -69,14 +81,17 @@ class ResourceManager(object):
                 animation_frame.blit(sheet, (0, 0), pygame.Rect(animation_data['x'] + frame_number * width, animation_data['y'], width, height))
                 animation_frames.append(animation_frame)
 
-            self.cached_animations[animation_sheet][animation]['{}x{}'.format(width, height)] = animation_frames, metadata[animation]['seconds_per_frame']
+            self.animation_cache[animation_sheet][animation]['{}x{}'.format(width, height)] = animation_frames, metadata[animation]['seconds_per_frame']
+
+    def get_sprite(self, name):
+        return self.sprites.get(name)
 
     def get_animation(self, animation_sheet, animation, width, height):
-        if not self.cached_animations[animation_sheet][animation].get('{}x{}'.format(width, height)):
-            _, metadata = self.animation_sheets[animation_sheet]
+        if not self.animation_cache[animation_sheet][animation].get('{}x{}'.format(width, height)):
+            _, metadata = self.animation_data[animation_sheet]
             default_width = metadata[animation]["width"]
             default_height = metadata[animation]["height"]
-            default_animation_frames, _ = self.cached_animations[animation_sheet][animation]['{}x{}'.format(default_width, default_height)]
+            default_animation_frames, _ = self.animation_cache[animation_sheet][animation]['{}x{}'.format(default_width, default_height)]
 
             scaled_animation_frames = []
             for default_animation_frame in default_animation_frames:
@@ -84,9 +99,9 @@ class ResourceManager(object):
                 scaled_animation_frame.blit(pygame.transform.scale(default_animation_frame, (width, height)), (0, 0))
                 scaled_animation_frames.append(scaled_animation_frame)
 
-            self.cached_animations[animation_sheet][animation]['{}x{}'.format(width, height)] = (
+            self.animation_cache[animation_sheet][animation]['{}x{}'.format(width, height)] = (
                 scaled_animation_frames,
                 metadata[animation]['seconds_per_frame']
             )
 
-        return self.cached_animations[animation_sheet][animation]['{}x{}'.format(width, height)]
+        return self.animation_cache[animation_sheet][animation]['{}x{}'.format(width, height)]

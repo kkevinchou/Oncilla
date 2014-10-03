@@ -39,7 +39,8 @@ def run():
     system_manager = set_up_systems()
 
     from lib.ecs.component.physics import PhysicsComponent
-    PinnedBlock(100, 300, 600, 50)
+    PinnedBlock(100, 300, 325, 50)
+    PinnedBlock(450, 300, 300, 50)
     PinnedBlock(100, 230, 100, 25)
     # block = Block(0, 200, 50, 50)
     # block[PhysicsComponent].velocity = Vec2d(100, 0)
@@ -47,9 +48,6 @@ def run():
 
     # WackBlock(100, 100, [20 * Vec2d(0.5, -0.5), 20 * Vec2d(-0.5, 0.5), 20 * Vec2d(0.5, 1.5), 20 * Vec2d(1.5, 0.5)])
     # WackBlock(100, 100, [20 * Vec2d(1, 0), 20 * Vec2d(0, 1), 20 * Vec2d(1, 2), 20 * Vec2d(2, 1)])
-
-    # clock = pygame.time.Clock()
-    quit = False
 
     if ENABLE_PROFILING:
         pr = cProfile.Profile()
