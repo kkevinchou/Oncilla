@@ -19,12 +19,14 @@ class ResourceManager(object):
         self.animation_data = {}
 
         # Audio
+        pygame.mixer.init()
         self.audio_folder = settings.AUDIO_FOLDER
         self.audio = {}
 
         # Loading
         self.load_animation_sheets()
         self.load_sprites()
+        self.load_audio()
 
     @staticmethod
     def get_instance():
@@ -36,9 +38,10 @@ class ResourceManager(object):
     def load_audio(self):
         print ' *** [ResourceManager :: Loading Audio]'
         for f in os.listdir(self.audio_folder):
+            filename, extension = os.path.splitext(f)
             audio_path = os.path.join(self.audio_folder, f)
             if os.path.isfile(audio_path):
-                self.audio[f] = audio_path
+                self.audio[filename] = pygame.mixer.Sound(audio_path)
                 print ' *** Loaded {}'.format(audio_path)
 
     def load_sprites(self):
@@ -82,6 +85,9 @@ class ResourceManager(object):
                 animation_frames.append(animation_frame)
 
             self.animation_cache[animation_sheet][animation]['{}x{}'.format(width, height)] = animation_frames, metadata[animation]['seconds_per_frame']
+
+    def get_audio(self, name):
+        return self.audio.get(name)
 
     def get_sprite(self, name):
         return self.sprites.get(name)

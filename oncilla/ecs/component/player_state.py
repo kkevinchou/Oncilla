@@ -4,10 +4,13 @@ from lib.ecs.component.render import AnimationRenderComponent
 from lib.vec2d import Vec2d
 from lib.command import Command
 from lib.physics.force import TimedForce
+from lib.audio.audio_manager import AudioManager
 
 from lib.enum import enum
 
 from oncilla.ecs.message_types import ENTITY_MESSAGE_TYPE
+
+audio_manager = AudioManager.get_instance()
 
 STATE_ID = enum(
     'IDLE',
@@ -87,6 +90,7 @@ class IdlePlayerStateComponent(PlayerStateComponent):
     state_id = STATE_ID.IDLE
 
     def jump(self):
+        audio_manager.play('jump')
         self.entity[PhysicsComponent].velocity = Vec2d(0, -450)
         self.entity[AnimationRenderComponent].set_animation('jump')
         self.entity.set_component(AirbornePlayerStateComponent(self.entity))
