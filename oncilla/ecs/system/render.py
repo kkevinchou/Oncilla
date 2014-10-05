@@ -68,9 +68,7 @@ class RenderSystem(System):
         self.handle_messages()
         self.elapsed_time += delta
 
-        while self.elapsed_time >= SECONDS_PER_FRAME:
-            self.elapsed_time -= SECONDS_PER_FRAME
-
+        if self.elapsed_time >= SECONDS_PER_FRAME:
             self.clear((171, 218, 237))
             for entity in self.entities:
                 render_component = entity[RenderComponent]
@@ -80,3 +78,4 @@ class RenderSystem(System):
             self.display_actual_fps(delta)
 
             self.flip()
+            self.elapsed_time %= SECONDS_PER_FRAME

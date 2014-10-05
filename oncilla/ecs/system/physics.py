@@ -86,6 +86,8 @@ class PhysicsSystem(System):
                 physics_component.velocity += delta * physics_component.acceleration
             
             entity.position += delta * physics_component.get_total_velocity()
+            if not entity.get(ImmovableComponent):
+                print 'POS: {}, VEL: {}'.format(entity.position, entity[PhysicsComponent].velocity)
 
         for entity_a in self.entities:
             overlaps_another_entity = False
