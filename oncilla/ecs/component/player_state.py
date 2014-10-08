@@ -45,27 +45,27 @@ class PlayerStateComponent(StateComponent):
     def jump(self):
         pass
 
+    def apply_move_left_momemtum(self):
+        if self.entity[PhysicsComponent].velocity[0] > -200:
+            self.entity[PhysicsComponent].velocity = Vec2d(-200, 0)
+
+    def apply_move_right_momemtum(self):
+        if self.entity[PhysicsComponent].velocity[0] < 200:
+            self.entity[PhysicsComponent].velocity = Vec2d(200, 0)
+
     def move_left(self):
         self.entity[PhysicsComponent].movement_velocity += Vec2d(-200, 0)
-        # self.entity[PhysicsComponent].velocity += Vec2d(-200, 0)
 
     def move_left_stop(self):
         self.entity[PhysicsComponent].movement_velocity += Vec2d(200, 0)
-        if self.state_id != STATE_ID.AIRBORNE:
-            if self.entity[PhysicsComponent].velocity[0] > -200:
-                self.entity[PhysicsComponent].velocity = Vec2d(-200, 0)
-        # self.entity[PhysicsComponent].forces['DriftForce'] = TimedForce(Vec2d(-500, 0), 0.1)
+        self.apply_move_left_momemtum()
 
     def move_right(self):
         self.entity[PhysicsComponent].movement_velocity += Vec2d(200, 0)
-        # self.entity[PhysicsComponent].velocity += Vec2d(200, 0)
 
     def move_right_stop(self):
         self.entity[PhysicsComponent].movement_velocity += Vec2d(-200, 0)
-        if self.state_id != STATE_ID.AIRBORNE:
-            if self.entity[PhysicsComponent].velocity[0] < 200:
-                self.entity[PhysicsComponent].velocity = Vec2d(200, 0)
-        # self.entity[PhysicsComponent].forces['DriftForce'] = TimedForce(Vec2d(500, 0), 0.1)
+        self.apply_move_right_momemtum()
 
     def send_message(self, message):
         if message['message_type'] == ENTITY_MESSAGE_TYPE.LANDED:
@@ -86,8 +86,11 @@ class IdlePlayerStateComponent(PlayerStateComponent):
         self.entity[AnimationRenderComponent].set_animation('jump')
         self.entity.set_component(AirbornePlayerStateComponent(self.entity))
 
-# class JumpingPlayerStateComponent(PlayerStateComponent):
-#     state_id = STATE_ID.JUMPING
-
 class AirbornePlayerStateComponent(PlayerStateComponent):
     state_id = STATE_ID.AIRBORNE
+
+    def apply_move_left_momemtum(self):
+        pass
+
+    def apply_move_right_momemtum(self):
+        pass
