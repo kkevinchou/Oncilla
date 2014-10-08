@@ -46,6 +46,12 @@ class PlayerStateComponent(StateComponent):
         pass
 
     def apply_move_left_momemtum(self):
+        pass
+
+    def apply_move_right_momemtum(self):
+        pass
+
+    def apply_move_left_momemtum(self):
         if self.entity[PhysicsComponent].velocity[0] > -200:
             self.entity[PhysicsComponent].velocity = Vec2d(-200, 0)
 
@@ -67,18 +73,30 @@ class PlayerStateComponent(StateComponent):
         self.entity[PhysicsComponent].movement_velocity += Vec2d(-200, 0)
         self.apply_move_right_momemtum()
 
+    # message_handlers
+
+    def handle_airborne(self, message):
+        pass
+
+    def handle_landed(self, message):
+        pass
+
     def send_message(self, message):
         if message['message_type'] == ENTITY_MESSAGE_TYPE.LANDED:
-            if self.state_id == STATE_ID.AIRBORNE:
-                self.entity.set_component(IdlePlayerStateComponent(self.entity))
-                self.entity[AnimationRenderComponent].set_animation('idle')
+            self.handle_landed(message)
         elif message['message_type'] == ENTITY_MESSAGE_TYPE.AIRBORNE:
-            if self.state_id != STATE_ID.AIRBORNE:
-                self.entity[AnimationRenderComponent].set_animation('jump')
-                self.entity.set_component(AirbornePlayerStateComponent(self.entity))
+            self.handle_airborne(message)
 
 class IdlePlayerStateComponent(PlayerStateComponent):
     state_id = STATE_ID.IDLE
+
+    def apply_move_left_momemtum(self):
+        if self.entity[PhysicsComponent].velocity[0] > -200:
+            self.entity[PhysicsComponent].velocity = Vec2d(-200, 0)
+
+    def apply_move_right_momemtum(self):
+        if self.entity[PhysicsComponent].velocity[0] < 200:
+            self.entity[PhysicsComponent].velocity = Vec2d(200, 0)
 
     def jump(self):
         # audio_manager.play('jump')
@@ -86,11 +104,13 @@ class IdlePlayerStateComponent(PlayerStateComponent):
         self.entity[AnimationRenderComponent].set_animation('jump')
         self.entity.set_component(AirbornePlayerStateComponent(self.entity))
 
+    def handle_airborne(self, message):
+        self.entity[AnimationRenderComponent].set_animation('jump')
+        self.entity.set_component(AirbornePlayerStateComponent(self.entity))
+
 class AirbornePlayerStateComponent(PlayerStateComponent):
     state_id = STATE_ID.AIRBORNE
 
-    def apply_move_left_momemtum(self):
-        pass
-
-    def apply_move_right_momemtum(self):
-        pass
+    def handle_landed(self, message):
+        self.entity.set_component(IdlePlayerStateComponent(self.entity))
+        self.entity[AnimationRenderComponent].set_animation('idle')
