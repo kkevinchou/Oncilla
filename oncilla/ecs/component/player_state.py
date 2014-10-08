@@ -51,14 +51,6 @@ class PlayerStateComponent(StateComponent):
     def apply_move_right_momemtum(self):
         pass
 
-    def apply_move_left_momemtum(self):
-        if self.entity[PhysicsComponent].velocity[0] > -200:
-            self.entity[PhysicsComponent].velocity = Vec2d(-200, 0)
-
-    def apply_move_right_momemtum(self):
-        if self.entity[PhysicsComponent].velocity[0] < 200:
-            self.entity[PhysicsComponent].velocity = Vec2d(200, 0)
-
     def move_left(self):
         self.entity[PhysicsComponent].movement_velocity += Vec2d(-200, 0)
 
