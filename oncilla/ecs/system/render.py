@@ -76,6 +76,5 @@ class RenderSystem(System):
                 render_component.draw(self.screen)
 
             self.display_actual_fps(delta)
-
             self.flip()
             self.elapsed_time %= SECONDS_PER_FRAME

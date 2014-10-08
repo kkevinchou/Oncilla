@@ -77,20 +77,11 @@ class PlayerStateComponent(StateComponent):
                 self.entity[AnimationRenderComponent].set_animation('jump')
                 self.entity.set_component(AirbornePlayerStateComponent(self.entity))
 
-    # def move_left(self):
-    #     pass
-
-    # def move_right(self):
-    #     pass
-
-    # def jump(self):
-    #     pass
-
 class IdlePlayerStateComponent(PlayerStateComponent):
     state_id = STATE_ID.IDLE
 
     def jump(self):
-        audio_manager.play('jump')
+        # audio_manager.play('jump')
         self.entity[PhysicsComponent].velocity = Vec2d(0, -450)
         self.entity[AnimationRenderComponent].set_animation('jump')
         self.entity.set_component(AirbornePlayerStateComponent(self.entity))

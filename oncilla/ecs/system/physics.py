@@ -30,20 +30,6 @@ class PhysicsSystem(System):
                 entity[PhysicsComponent].forces['Gravity'] = Force(entity[PhysicsComponent].mass * self.gravity_acceleration)
 
     def find_resolution_vector(self, separating_vectors, correction_vector):
-        # minimum_correction = 99999
-        # min_vec = None
-        #
-        # correction_vector = correction_vector.normalized()
-        #
-        # for separating_vector in separating_vectors:
-        #     scalar_projection = separating_vector.scalar_projection(correction_vector)
-        #     if scalar_projection < minimum_correction and scalar_projection > 0:
-        #         minimum_correction = scalar_projection
-        #         min_vec = separating_vector
-        #
-        # return minimum_correction * correction_vector
-        # return min_vec
-
         min_vec = separating_vectors[0]
         min_length =separating_vectors[0].get_length()
 
@@ -60,6 +46,8 @@ class PhysicsSystem(System):
         self.collisions = []
 
         for entity in self.entities:
+            if entity.get(ImmovableComponent):
+                continue
             physics_component = entity[PhysicsComponent]
             physics_component.update_forces(delta)
 
@@ -86,8 +74,6 @@ class PhysicsSystem(System):
                 physics_component.velocity += delta * physics_component.acceleration
             
             entity.position += delta * physics_component.get_total_velocity()
-            if not entity.get(ImmovableComponent):
-                print 'POS: {}, VEL: {}'.format(entity.position, entity[PhysicsComponent].velocity)
 
         for entity_a in self.entities:
             overlaps_another_entity = False
@@ -141,8 +127,6 @@ class PhysicsSystem(System):
                     if 'Friction' in entity_a[PhysicsComponent].forces:
                         friction_force = entity_a[PhysicsComponent].forces['Friction']
                         if friction_force.source == entity_b:
-                            # entity_a[PhysicsComponent].velocity -= delta * entity_a[PhysicsComponent].forces['Friction'].vector
-                            # entity_a.position -= delta * delta * entity_a[PhysicsComponent].velocity
                             entity_a[PhysicsComponent].forces.pop('Friction')
 
             if not overlaps_another_entity:

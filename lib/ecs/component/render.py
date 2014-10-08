@@ -57,7 +57,7 @@ class AnimationRenderComponent(RenderComponent):
         self.elapsed_time %= self.seconds_per_frame
 
     def draw(self, screen):
-        screen.blit(self.animation_frames[self.frame], self.entity.position)
+        screen.blit(self.animation_frames[self.frame], (int(self.entity.position[0]), int(self.entity.position[1])))
 
 class ShapeRenderComponent(RenderComponent):
     def __init__(self, shape_component):
