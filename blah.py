@@ -16,6 +16,7 @@ from oncilla.ecs.system.physics import PhysicsSystem
 from lib.ecs.system.input import InputSystem
 from oncilla.ecs.entity.block import Block, PinnedBlock, WackBlock
 from oncilla.ecs.entity.player import PlayerBlock
+from oncilla.ecs.entity.spirit import Spirit
 
 ENABLE_PROFILING = False
 
@@ -43,6 +44,7 @@ def run():
     PinnedBlock(400, 230, 100, 25)
     PinnedBlock(150, 300, 500, 25)
     PlayerBlock(100, 0, 64, 64)
+    Spirit(500, 0, 64, 64)
     # PinnedBlock(503, 230, 100, 25)
     # PlayerBlock(503, 0, 200, 200)
 
