@@ -1,2 +1,2 @@
 class StateComponent(object):
-    pass
+    component_id = 'StateComponent'

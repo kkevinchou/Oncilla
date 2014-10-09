@@ -37,8 +37,6 @@ class JumpCommand(Command):
         entity[SpiritStateComponent].jump()
 
 class SpiritStateComponent(StateComponent):
-    component_id = 'StateComponent'
-
     def __init__(self, entity):
         self.entity = entity
 

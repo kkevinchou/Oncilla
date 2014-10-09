@@ -6,6 +6,7 @@ from lib.ecs.component.shape import ShapeComponent
 from lib.ecs.component.physics import PhysicsComponent, SkipGravityComponent, ImmovableComponent
 from lib.geometry import calculate_separating_vectors
 from lib.physics.force import Force
+from lib.ecs.component.state import StateComponent
 
 from oncilla.ecs.message_types import MESSAGE_TYPE, ENTITY_MESSAGE_TYPE
 
@@ -82,6 +83,9 @@ class PhysicsSystem(System):
 
             for entity_b in self.entities:
                 if entity_a == entity_b:
+                    continue
+
+                if entity_a.get(StateComponent) and entity_b.get(StateComponent):
                     continue
 
                 shape_a = entity_a[ShapeComponent]

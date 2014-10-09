@@ -37,8 +37,6 @@ class JumpCommand(Command):
         entity[PlayerStateComponent].jump()
 
 class PlayerStateComponent(StateComponent):
-    component_id = 'StateComponent'
-
     def __init__(self, entity):
         self.entity = entity
 
