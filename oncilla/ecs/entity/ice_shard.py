@@ -33,7 +33,7 @@ class IceShard(Entity):
 
     def create_components(self, width, height):
         return [
-            # RectShapeComponent(self, width, height),
+            RectShapeComponent(self, width, height),
             AnimationRenderComponent(self, 'testsheet', width, height),
             PhysicsComponent(self),
         ]

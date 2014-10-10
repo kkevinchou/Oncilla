@@ -96,7 +96,7 @@ class PhysicsSystem(System):
                 shape_a = entity_a.get(ShapeComponent)
                 shape_b = entity_b.get(ShapeComponent)
 
-                if None in (shape_a, shape_b):
+                if shape_a is None or shape_b is None:
                     continue
 
                 separating_vectors, overlap = calculate_separating_vectors(shape_a.get_points(), shape_b.get_points())
