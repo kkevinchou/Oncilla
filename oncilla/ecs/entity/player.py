@@ -5,6 +5,7 @@ from lib.ecs.component.input import KeyboardInputComponent
 from lib.ecs.component.shape import RectShapeComponent
 from lib.ecs.component.render import AnimationRenderComponent
 from lib.ecs.system_manager import SystemManager
+from lib.ecs.component.character import CharacterComponent
 
 from lib.ecs.entity.entity import Entity
 
@@ -14,7 +15,8 @@ from oncilla.ecs.component.player_state import (
     IdlePlayerStateComponent,
     JumpCommand,
     MoveLeftCommand,
-    MoveRightCommand
+    MoveRightCommand,
+    IceShardCommand
 )
 
 class PlayerBlock(Entity):
@@ -24,7 +26,7 @@ class PlayerBlock(Entity):
         super(PlayerBlock, self).__init__(x, y)
         self.set_components(self.create_components(width, height))
 
-        PlayerBlock.system_manager.send_message({
+        self.system_manager.send_message({
             'message_type': MESSAGE_TYPE.CREATE_ENTITY,
             'entity_type': 'block',
             'entity': self
@@ -34,20 +36,17 @@ class PlayerBlock(Entity):
         self[PlayerStateComponent].send_message(message)
 
     def create_components(self, width, height):
-        shape_component = RectShapeComponent(self, width, height)
-        render_component = AnimationRenderComponent(self, 'testsheet', width, height)
-        physics_component = PhysicsComponent(self)
-        state_component = IdlePlayerStateComponent(self)
-
         keyboard_input_component = KeyboardInputComponent(self)
         keyboard_input_component.bind(pygame.K_w, JumpCommand())
         keyboard_input_component.bind(pygame.K_a, MoveLeftCommand())
         keyboard_input_component.bind(pygame.K_d, MoveRightCommand())
+        keyboard_input_component.bind(pygame.K_j, IceShardCommand())
 
         return [
-            shape_component,
-            render_component,
-            physics_component,
-            state_component,
-            keyboard_input_component
+            RectShapeComponent(self, width, height),
+            AnimationRenderComponent(self, 'testsheet', width, height),
+            PhysicsComponent(self),
+            IdlePlayerStateComponent(self),
+            keyboard_input_component,
+            CharacterComponent(),
         ]

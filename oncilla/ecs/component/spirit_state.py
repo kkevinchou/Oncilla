@@ -8,7 +8,7 @@ from lib.audio.audio_manager import AudioManager
 
 from lib.enum import enum
 
-from oncilla.ecs.message_types import ENTITY_MESSAGE_TYPE
+from oncilla.ecs.message_types import MESSAGE_TYPE
 
 audio_manager = AudioManager.get_instance()
 
@@ -72,9 +72,9 @@ class SpiritStateComponent(StateComponent):
         pass
 
     def send_message(self, message):
-        if message['message_type'] == ENTITY_MESSAGE_TYPE.LANDED:
+        if message['message_type'] == MESSAGE_TYPE.LANDED:
             self.handle_landed(message)
-        elif message['message_type'] == ENTITY_MESSAGE_TYPE.AIRBORNE:
+        elif message['message_type'] == MESSAGE_TYPE.AIRBORNE:
             self.handle_airborne(message)
 
 class IdleSpiritStateComponent(SpiritStateComponent):

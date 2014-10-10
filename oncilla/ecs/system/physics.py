@@ -4,13 +4,17 @@ from lib.vec2d import Vec2d
 from lib.ecs.system.system import System
 from lib.ecs.component.shape import ShapeComponent
 from lib.ecs.component.physics import PhysicsComponent, SkipGravityComponent, ImmovableComponent
+from lib.ecs.component.character import CharacterComponent
 from lib.geometry import calculate_separating_vectors
+from lib.ecs.system_manager import SystemManager
 from lib.physics.force import Force
 from lib.ecs.component.state import StateComponent
 
-from oncilla.ecs.message_types import MESSAGE_TYPE, ENTITY_MESSAGE_TYPE
+from oncilla.ecs.message_types import MESSAGE_TYPE, MESSAGE_TYPE
 
 class PhysicsSystem(System):
+    system_manager = SystemManager.get_instance()
+
     def __init__(self):
         self.entities = []
 
@@ -25,7 +29,7 @@ class PhysicsSystem(System):
 
     def handle_create_entity(self, message):
         entity = message['entity']
-        if entity.get(ShapeComponent) and entity.get(PhysicsComponent):
+        if entity.get(PhysicsComponent):
             self.entities.append(message['entity'])
             if not entity.get(SkipGravityComponent):
                 entity[PhysicsComponent].forces['Gravity'] = Force(entity[PhysicsComponent].mass * self.gravity_acceleration)
@@ -78,6 +82,7 @@ class PhysicsSystem(System):
 
         for entity_a in self.entities:
             overlaps_another_entity = False
+            
             if entity_a.get(ImmovableComponent):
                 continue
 
@@ -85,23 +90,31 @@ class PhysicsSystem(System):
                 if entity_a == entity_b:
                     continue
 
-                if entity_a.get(StateComponent) and entity_b.get(StateComponent):
+                if entity_a.get(CharacterComponent) and entity_b.get(CharacterComponent):
                     continue
 
-                shape_a = entity_a[ShapeComponent]
-                shape_b = entity_b[ShapeComponent]
+                shape_a = entity_a.get(ShapeComponent)
+                shape_b = entity_b.get(ShapeComponent)
+
+                if None in (shape_a, shape_b):
+                    continue
 
                 separating_vectors, overlap = calculate_separating_vectors(shape_a.get_points(), shape_b.get_points())
                 entity_a_total_velocity = entity_a[PhysicsComponent].get_total_velocity()
 
                 if overlap:
+                    self.system_manager.send_message({
+                        'message_type': MESSAGE_TYPE.COLLISION,
+                        'first': entity_a,
+                        'second': entity_b
+                    })
                     overlaps_another_entity = True
                     resolution_vector = self.find_resolution_vector(separating_vectors, -1 * entity_a_total_velocity)
                     resolution_vector_normalized = resolution_vector.normalized()
 
                     if resolution_vector_normalized == Vec2d(0, -1):
                         entity_a.send_message({
-                            'message_type': ENTITY_MESSAGE_TYPE.LANDED,
+                            'message_type': MESSAGE_TYPE.LANDED,
                         })
 
                         entity_a[PhysicsComponent].velocity = Vec2d(entity_a[PhysicsComponent].velocity[0], 0)
@@ -135,5 +148,5 @@ class PhysicsSystem(System):
 
             if not overlaps_another_entity:
                 entity_a.send_message({
-                    'message_type': ENTITY_MESSAGE_TYPE.AIRBORNE,
+                    'message_type': MESSAGE_TYPE.AIRBORNE,
                 })

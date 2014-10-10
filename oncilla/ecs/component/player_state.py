@@ -8,7 +8,8 @@ from lib.audio.audio_manager import AudioManager
 
 from lib.enum import enum
 
-from oncilla.ecs.message_types import ENTITY_MESSAGE_TYPE
+from oncilla.ecs.message_types import MESSAGE_TYPE
+from oncilla.ecs.entity.ice_shard import IceShard
 
 audio_manager = AudioManager.get_instance()
 
@@ -35,6 +36,10 @@ class MoveRightCommand(Command):
 class JumpCommand(Command):
     def execute(self, entity):
         entity[PlayerStateComponent].jump()
+
+class IceShardCommand(Command):
+    def execute(self, entity):
+        entity[PlayerStateComponent].ice_shard()
 
 class PlayerStateComponent(StateComponent):
     def __init__(self, entity):
@@ -63,6 +68,15 @@ class PlayerStateComponent(StateComponent):
         self.entity[PhysicsComponent].movement_velocity += Vec2d(-200, 0)
         self.apply_move_right_momemtum()
 
+    def ice_shard(self):
+        ice_shard = IceShard(
+            self,
+            self.entity.position[0] + 50,
+            self.entity.position[1],
+            20,
+            10
+        )
+
     # message_handlers
 
     def handle_airborne(self, message):
@@ -72,9 +86,9 @@ class PlayerStateComponent(StateComponent):
         pass
 
     def send_message(self, message):
-        if message['message_type'] == ENTITY_MESSAGE_TYPE.LANDED:
+        if message['message_type'] == MESSAGE_TYPE.LANDED:
             self.handle_landed(message)
-        elif message['message_type'] == ENTITY_MESSAGE_TYPE.AIRBORNE:
+        elif message['message_type'] == MESSAGE_TYPE.AIRBORNE:
             self.handle_airborne(message)
 
 class IdlePlayerStateComponent(PlayerStateComponent):

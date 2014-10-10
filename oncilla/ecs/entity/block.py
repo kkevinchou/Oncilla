@@ -17,7 +17,7 @@ class Block(Entity):
 
         self.set_components(self.create_components(width, height))
 
-        Block.system_manager.send_message({
+        self.system_manager.send_message({
             'message_type': MESSAGE_TYPE.CREATE_ENTITY,
             'entity_type': 'block',
             'entity': self
@@ -51,7 +51,7 @@ class WackBlock(Entity):
 
         self.set_components(self.create_components())
 
-        Block.system_manager.send_message({
+        self.system_manager.send_message({
             'message_type': MESSAGE_TYPE.CREATE_ENTITY,
             'entity_type': 'block',
             'entity': self
