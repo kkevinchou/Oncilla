@@ -19,11 +19,13 @@ from oncilla.ecs.component.player_state import (
     IceShardCommand
 )
 
+from oncilla.collision_types import COLLISION_TYPE
+
 class PlayerBlock(Entity):
     system_manager = SystemManager.get_instance()
 
     def __init__(self, x, y, width, height):
-        super(PlayerBlock, self).__init__(x, y)
+        super(PlayerBlock, self).__init__(x, y, COLLISION_TYPE.COL_PLAYER, COLLISION_TYPE.COL_BLOCK)
         self.set_components(self.create_components(width, height))
 
         self.system_manager.send_message({

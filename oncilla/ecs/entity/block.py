@@ -8,12 +8,13 @@ from lib.ecs.entity.entity import Entity
 from lib.ecs.component.physics import PhysicsComponent, SkipGravityComponent, ImmovableComponent
 
 from oncilla.ecs.message_types import MESSAGE_TYPE
+from oncilla.collision_types import COLLISION_TYPE
 
 class Block(Entity):
     system_manager = SystemManager.get_instance()
 
     def __init__(self, x, y, width, height):
-        super(Block, self).__init__(x, y)
+        super(Block, self).__init__(x, y, COLLISION_TYPE.COL_BLOCK)
 
         self.set_components(self.create_components(width, height))
 

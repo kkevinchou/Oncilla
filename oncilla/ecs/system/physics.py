@@ -82,7 +82,7 @@ class PhysicsSystem(System):
 
         for entity_a in self.entities:
             overlaps_another_entity = False
-            
+
             if entity_a.get(ImmovableComponent):
                 continue
 
@@ -102,7 +102,7 @@ class PhysicsSystem(System):
                 separating_vectors, overlap = calculate_separating_vectors(shape_a.get_points(), shape_b.get_points())
                 entity_a_total_velocity = entity_a[PhysicsComponent].get_total_velocity()
 
-                if overlap:
+                if overlap and entity_a.collision_mask & entity_b.collision_type:
                     self.system_manager.send_message({
                         'message_type': MESSAGE_TYPE.COLLISION,
                         'first': entity_a,
