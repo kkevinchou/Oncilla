@@ -66,3 +66,6 @@ class SkipGravityComponent(Component):
 
 class ImmovableComponent(Component):
     component_id = 'ImmovableComponent'
+
+class SkipCollisionResolutionComponent(Component):
+    component_id = 'SkipCollisionResolutionComponent'

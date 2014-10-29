@@ -3,29 +3,41 @@ import itertools
 from lib.vec2d import Vec2d
 from lib.ecs.system.system import System
 from lib.ecs.component.shape import ShapeComponent
-from lib.ecs.component.physics import PhysicsComponent, SkipGravityComponent, ImmovableComponent
+from lib.ecs.component.physics import (
+    PhysicsComponent,
+    SkipGravityComponent,
+    ImmovableComponent,
+    SkipCollisionResolutionComponent
+)
 from lib.ecs.component.character import CharacterComponent
 from lib.geometry import calculate_separating_vectors
 from lib.ecs.system_manager import SystemManager
 from lib.physics.force import Force
 from lib.ecs.component.state import StateComponent
 
+from oncilla.ecs.system.reaper import ReaperSystem
 from oncilla.ecs.message_types import MESSAGE_TYPE, MESSAGE_TYPE
 
 class PhysicsSystem(System):
     system_manager = SystemManager.get_instance()
+    reaper_system = ReaperSystem.get_instance()
 
     def __init__(self):
         self.entities = []
 
         message_handlers = {
             MESSAGE_TYPE.CREATE_ENTITY: self.handle_create_entity,
+            MESSAGE_TYPE.DESTROY_ENTITY: self.handle_destroy_entity,
         }
 
         self.gravity_acceleration = Vec2d(0, 1200)
         self.coefficient_of_friction = 1.5
 
         super(PhysicsSystem, self).__init__(message_handlers)
+
+    def handle_destroy_entity(self, message):
+        entity = message['entity']
+        self.reaper_system.queue_reap(self.entities, entity)
 
     def handle_create_entity(self, message):
         entity = message['entity']
@@ -105,10 +117,14 @@ class PhysicsSystem(System):
                 if overlap and entity_a.collision_mask & entity_b.collision_type:
                     self.system_manager.send_message({
                         'message_type': MESSAGE_TYPE.COLLISION,
-                        'first': entity_a,
-                        'second': entity_b
+                        'collider': entity_a,
+                        'collidee': entity_b
                     })
                     overlaps_another_entity = True
+
+                    if entity_a.get(SkipCollisionResolutionComponent) or entity_b.get(SkipCollisionResolutionComponent):
+                        continue
+
                     resolution_vector = self.find_resolution_vector(separating_vectors, -1 * entity_a_total_velocity)
                     resolution_vector_normalized = resolution_vector.normalized()
 

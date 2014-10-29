@@ -1,3 +1,5 @@
+from oncilla.ecs.message_types import MESSAGE_TYPE
+
 class SystemManager(object):
     instance = None
     
@@ -11,9 +13,9 @@ class SystemManager(object):
 
         return SystemManager.instance
 
-    def send_message(self, message):
+    def send_message(self, message, immediate=False):
         for system in self.systems:
-            system.send_message(message)
+            system.send_message(message, immediate)
 
     def update(self, delta):
         for system in self.systems:

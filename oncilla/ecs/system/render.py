@@ -5,6 +5,7 @@ from lib.ecs.system.system import System
 from lib.vec2d import Vec2d
 from lib.ecs.component.render import RenderComponent
 
+from oncilla.ecs.system.reaper import ReaperSystem
 from oncilla.ecs.message_types import MESSAGE_TYPE
 from oncilla.settings import FRAMES_PER_SECOND, PRINT_FPS
 
@@ -12,6 +13,8 @@ SECONDS_PER_FRAME = 1.0 / FRAMES_PER_SECOND
 SECONDS_PER_FPS_DISPLAY = 0.2
 
 class RenderSystem(System):
+    reaper_system = ReaperSystem.get_instance()
+
     def __init__(self, width, height):
         pygame.init()
         pygame.font.init()
@@ -33,6 +36,7 @@ class RenderSystem(System):
 
         message_handlers = {
             MESSAGE_TYPE.CREATE_ENTITY: self.handle_create_entity,
+            MESSAGE_TYPE.DESTROY_ENTITY: self.handle_destroy_entity,
         }
 
         super(RenderSystem, self).__init__(message_handlers)
@@ -58,6 +62,10 @@ class RenderSystem(System):
 
         text = self.font.render('FPS: {:1.2f}'.format(self.actual_fps), 1, (37, 4, 52))
         self.screen.blit(text, (0, 0))
+
+    def handle_destroy_entity(self, message):
+        entity = message['entity']
+        self.reaper_system.queue_reap(self.entities, entity)
 
     def handle_create_entity(self, message):
         entity = message['entity']

@@ -13,6 +13,8 @@ from lib.resource_manager import ResourceManager
 
 from oncilla.ecs.system.render import RenderSystem
 from oncilla.ecs.system.physics import PhysicsSystem
+from oncilla.ecs.system.projectile import ProjectileSystem
+from oncilla.ecs.system.reaper import ReaperSystem
 from lib.ecs.system.input import InputSystem
 from oncilla.ecs.entity.block import Block, PinnedBlock, WackBlock
 from oncilla.ecs.entity.player import PlayerBlock
@@ -23,14 +25,12 @@ ENABLE_PROFILING = False
 def set_up_systems():
     system_manager = SystemManager.get_instance()
 
-    input_system = InputSystem()
-    render_system = RenderSystem(800, 600)
-    physics_system = PhysicsSystem()
-
     system_manager.init([
-        input_system,
-        physics_system,
-        render_system,
+        InputSystem(),
+        PhysicsSystem(),
+        ProjectileSystem(),
+        ReaperSystem.get_instance(),
+        RenderSystem(settings.SCREEN_WIDTH, settings.SCREEN_HEIGHT),
     ])
 
     return system_manager

@@ -76,6 +76,7 @@ class PlayerStateComponent(StateComponent):
             20,
             10
         )
+        ice_shard[PhysicsComponent].velocity += Vec2d(200, 0)
 
     # message_handlers
 
