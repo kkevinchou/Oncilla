@@ -329,8 +329,10 @@ class Vec2d(object):
         projected_length_times_other_length = self.dot(other)
         return other*(projected_length_times_other_length/other_length_sqrd)
 
-    def scalar_projection(self, other):
-        return self.dot(other)/other.get_length()
+    def scalar_projection(self, other, other_length=None):
+        if other_length is None:
+            other_length = other.get_length()
+        return self.dot(other) / other_length
  
     def cross(self, other):
         return self.x*other[1] - self.y*other[0]

@@ -7,7 +7,8 @@ def circular_pairs(list):
         yield (list[i + 1], list[0])
 
 def get_min_max_projection(points, axis):
-    starting_proj = points[0].scalar_projection(axis)
+    axis_length = axis.get_length()
+    starting_proj = points[0].scalar_projection(axis, other_length=axis_length)
     min_proj = starting_proj
     max_proj = starting_proj
 
@@ -15,7 +16,7 @@ def get_min_max_projection(points, axis):
         if i == 0:
             continue
 
-        projection = points[i].scalar_projection(axis)
+        projection = points[i].scalar_projection(axis, other_length=axis_length)
 
         if projection > max_proj:
             max_proj = projection
