@@ -6,7 +6,7 @@ def circular_pairs(list):
     else:
         yield (list[i + 1], list[0])
 
-def get_min_max_projection(points, vectors, axis):
+def get_min_max_projection(points, axis):
     starting_proj = points[0].scalar_projection(axis)
     min_proj = starting_proj
     max_proj = starting_proj
@@ -43,8 +43,8 @@ def calculate_separating_vectors(points_0, points_1):
     overlap = True
 
     for axis in axes:
-        min_proj_0, max_proj_0 = get_min_max_projection(points_0, polygon_vectors_0, axis)
-        min_proj_1, max_proj_1 = get_min_max_projection(points_1, polygon_vectors_1, axis)
+        min_proj_0, max_proj_0 = get_min_max_projection(points_0, axis)
+        min_proj_1, max_proj_1 = get_min_max_projection(points_1, axis)
 
         if max_proj_0 > min_proj_1 and min_proj_0 <= min_proj_1:
             delta = -(max_proj_0 - min_proj_1)

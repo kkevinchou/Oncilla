@@ -20,7 +20,7 @@ from oncilla.ecs.entity.block import Block, PinnedBlock, WackBlock
 from oncilla.ecs.entity.player import PlayerBlock
 from oncilla.ecs.entity.spirit import Spirit
 
-ENABLE_PROFILING = False
+ENABLE_PROFILING = True
 
 def set_up_systems():
     system_manager = SystemManager.get_instance()
