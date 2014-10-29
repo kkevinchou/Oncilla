@@ -26,4 +26,4 @@ Bugs
     PlayerBlock(100, 0, 200, 200)
 * Weird falling into edge bug
     Jump off a platform and slide against the vertical edge of the platform
-* Firing Ice Shard right next to block
+* Firing Ice Shard right next to block (work around is to send all messages as 'immediate')
