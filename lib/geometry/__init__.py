@@ -25,6 +25,14 @@ def get_min_max_projection(points, axis):
 
     return min_proj, max_proj
 
+# def get_min_max_projection(points, axis):
+#     axis_length = axis.get_length()
+#     projections = [point.scalar_projection(axis, other_length=axis_length) for point in points]
+#     min_proj = min(projections)
+#     max_proj = max(projections)
+
+#     return min_proj, max_proj
+
 def calculate_separating_vectors(points_0, points_1):
     polygon_vectors_0 = [p2 - p1 for p1, p2 in circular_pairs(points_0)]
     polygon_normals_0 = [v.perpendicular().normalized() for v in polygon_vectors_0]
