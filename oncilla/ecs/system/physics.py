@@ -46,7 +46,7 @@ class PhysicsSystem(System):
             if not entity.get(SkipGravityComponent):
                 entity[PhysicsComponent].forces['Gravity'] = Force(entity[PhysicsComponent].mass * self.gravity_acceleration)
 
-    def find_resolution_vector(self, separating_vectors, correction_vector):
+    def find_resolution_vector(self, separating_vectors):
         min_vec = separating_vectors[0]
         min_length =separating_vectors[0].get_length()
 
@@ -125,7 +125,7 @@ class PhysicsSystem(System):
                     if entity_a.get(SkipCollisionResolutionComponent) or entity_b.get(SkipCollisionResolutionComponent):
                         continue
 
-                    resolution_vector = self.find_resolution_vector(separating_vectors, -1 * entity_a_total_velocity)
+                    resolution_vector = self.find_resolution_vector(separating_vectors)
                     resolution_vector_normalized = resolution_vector.normalized()
 
                     if resolution_vector_normalized == Vec2d(0, -1):

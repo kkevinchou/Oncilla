@@ -44,7 +44,7 @@ def run():
     PinnedBlock(400, 230, 100, 25)
     PinnedBlock(150, 300, 500, 25)
     PlayerBlock(100, 0, 64, 64)
-    Spirit(500, 0, 64, 64)
+    # Spirit(500, 0, 64, 64)
     # PinnedBlock(503, 230, 100, 25)
     # PlayerBlock(503, 0, 200, 200)
 

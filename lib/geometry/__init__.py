@@ -42,7 +42,7 @@ def calculate_separating_vectors(points_0, points_1):
 
     axes = set(polygon_normals_0)
     for normal in polygon_normals_1:
-        if any([negation in axes for negation in normal.get_negations()]):
+        if any(negation in axes for negation in normal.get_negations()):
             continue
         else:
             axes.add(normal)
@@ -61,7 +61,7 @@ def calculate_separating_vectors(points_0, points_1):
             delta = max_proj_1 - min_proj_0
         else:
             overlap = False
-            continue
+            break
 
         separating_vectors.append(axis * delta)
 
