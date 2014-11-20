@@ -14,9 +14,11 @@ from lib.geometry import calculate_separating_vectors
 from lib.ecs.system_manager import SystemManager
 from lib.physics.force import Force
 from lib.ecs.component.state import StateComponent
+from lib.quad_tree.quad_tree import QuadTreeNode
 
 from oncilla.ecs.system.reaper import ReaperSystem
 from oncilla.ecs.message_types import MESSAGE_TYPE, MESSAGE_TYPE
+from oncilla import settings
 
 class PhysicsSystem(System):
     system_manager = SystemManager.get_instance()
@@ -61,6 +63,9 @@ class PhysicsSystem(System):
     def update(self, delta):
         self.handle_messages()
         self.collisions = []
+        quad_tree = QuadTreeNode(0, 0, settings.SCREEN_WIDTH, settings.SCREEN_HEIGHT)
+        for entity in self.entities:
+            quad_tree.add_entity(entity)
 
         for entity in self.entities:
             if entity.get(ImmovableComponent):
@@ -98,7 +103,8 @@ class PhysicsSystem(System):
             if entity_a.get(ImmovableComponent):
                 continue
 
-            for entity_b in self.entities:
+            for entity_b in quad_tree.get_intersections(entity_a):
+            # for entity_b in self.entities:
                 if entity_a == entity_b:
                     continue
 

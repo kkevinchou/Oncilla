@@ -47,6 +47,19 @@ class QuadTreeNode(object):
 
         self.entities = []
 
+    def get_intersections(self, entity):
+        intersections = []
+
+        for child in self.children:
+            if child.intersects(entity):
+                intersections.extend(child.get_intersections(entity))
+
+        for _entity in self.entities:
+            if _entity[RectShapeComponent].intersects(entity[RectShapeComponent]):
+                intersections.append(_entity)
+
+        return intersections
+
     def print_node(self, indentation_level=0):
         if indentation_level == 0:
             print
