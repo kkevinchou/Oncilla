@@ -5,8 +5,8 @@ Oncilla
 
 TODO
 =======
-* ReaperSystem
 * Some mechanism for blend animations
+* Spatial Partitioning
 
 Refactoring
 =======
