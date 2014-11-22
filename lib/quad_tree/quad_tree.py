@@ -1,5 +1,6 @@
 from lib.ecs.component.shape import RectShapeComponent
 from lib.geometry.rect import Rect
+import pygame
 
 class QuadTreeNode(object):
     def __init__(self, x, y, width, height, max_count=4):
@@ -18,17 +19,20 @@ class QuadTreeNode(object):
 
     def add_entity(self, entity):
         if self.intersects(entity):
-            self.entities.append(entity)
+            if self.children:
+                for child in self.children:
+                    child.add_entity(entity)
+            else:
+                self.entities.append(entity)
             if len(self.entities) > self.max_count:
                 self.split()
 
     def remove_entity(self, entity):
-        if len(self.children) > 0:
-            for child in self.children:
-                child.remove_entity(entity)
-        else:
-            if entity in self.entities:
-                self.entities.remove(entity)
+        for child in self.children:
+            child.remove_entity(entity)
+
+        if entity in self.entities:
+            self.entities.remove(entity)
 
     def split(self):
         child_width = int(self.width / 2.0)
@@ -39,7 +43,7 @@ class QuadTreeNode(object):
         bottom_left_child = QuadTreeNode(self.x, self.y + child_height, child_width, self.height - child_height, self.max_count)
         bottom_right_child = QuadTreeNode(self.x + child_width, self.y + child_height, self.width - child_width, self.height - child_height, self.max_count)
 
-        self.children.extend([top_left_child, top_right_child, bottom_left_child, bottom_right_child])
+        self.children = [top_left_child, top_right_child, bottom_left_child, bottom_right_child]
 
         for child in self.children:
             for entity in self.entities:
@@ -59,6 +63,14 @@ class QuadTreeNode(object):
                 intersections.append(_entity)
 
         return intersections
+
+    def render(self, screen):
+        color=(0, 115, 0)
+        if self.children:
+            pygame.draw.line(screen, color, (self.x + int(self.width / 2.0), self.y), (self.x + int(self.width / 2.0), self.y + self.height))
+            pygame.draw.line(screen, color, (self.x, self.y + int(self.height / 2.0)), (self.x + self.width, self.y + int(self.height / 2.0)))
+        for child in self.children:
+            child.render(screen)
 
     def print_node(self, indentation_level=0):
         if indentation_level == 0:

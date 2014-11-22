@@ -8,6 +8,7 @@ from lib.ecs.component.render import RenderComponent
 from oncilla.ecs.system.reaper import ReaperSystem
 from oncilla.ecs.message_types import MESSAGE_TYPE
 from oncilla.settings import FRAMES_PER_SECOND, PRINT_FPS
+from oncilla import settings
 
 SECONDS_PER_FRAME = 1.0 / FRAMES_PER_SECOND
 SECONDS_PER_FPS_DISPLAY = 0.2
@@ -24,6 +25,7 @@ class RenderSystem(System):
         self.screen = pygame.display.set_mode(size, 0, 32)
         self.entities = []
         self.elapsed_time = 0
+        self.quad_tree = None
 
         # FPS display settings
         self.font = pygame.font.Font(None, 20)
@@ -37,6 +39,7 @@ class RenderSystem(System):
         message_handlers = {
             MESSAGE_TYPE.CREATE_ENTITY: self.handle_create_entity,
             MESSAGE_TYPE.DESTROY_ENTITY: self.handle_destroy_entity,
+            MESSAGE_TYPE.QUAD_TREE: self.handle_quad_tree,
         }
 
         super(RenderSystem, self).__init__(message_handlers)
@@ -72,6 +75,9 @@ class RenderSystem(System):
         if entity.get(RenderComponent):
             self.entities.append(entity)
 
+    def handle_quad_tree(self, message):
+        self.quad_tree = message['quad_tree']
+
     def update(self, delta):
         self.handle_messages()
         self.elapsed_time += delta
@@ -83,6 +89,8 @@ class RenderSystem(System):
                 render_component.update(delta)
                 render_component.draw(self.screen)
 
+            if settings.DISPLAY_QUAD_TREE and self.quad_tree:
+                self.quad_tree.render(self.screen)
             self.display_actual_fps(delta)
             self.flip()
             self.elapsed_time %= SECONDS_PER_FRAME

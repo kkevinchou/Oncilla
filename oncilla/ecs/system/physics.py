@@ -67,6 +67,11 @@ class PhysicsSystem(System):
         for entity in self.entities:
             quad_tree.add_entity(entity)
 
+        self.system_manager.send_message({
+            'message_type': MESSAGE_TYPE.QUAD_TREE,
+            'quad_tree': quad_tree,
+        })
+
         for entity in self.entities:
             if entity.get(ImmovableComponent):
                 continue

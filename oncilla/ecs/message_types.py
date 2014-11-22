@@ -9,4 +9,5 @@ MESSAGE_TYPE = enum(
     'LANDED',
     'AIRBORNE',
     'COLLISION',
+    'QUAD_TREE'
 )

@@ -20,8 +20,6 @@ from oncilla.ecs.entity.block import Block, PinnedBlock, WackBlock
 from oncilla.ecs.entity.player import PlayerBlock
 from oncilla.ecs.entity.spirit import Spirit
 
-ENABLE_PROFILING = True
-
 def set_up_systems():
     system_manager = SystemManager.get_instance()
 
@@ -43,7 +41,7 @@ def run():
     PinnedBlock(100, 230, 100, 25)
     PinnedBlock(400, 230, 100, 25)
     PinnedBlock(150, 300, 500, 25)
-    PlayerBlock(100, 0, 64, 64)
+    PlayerBlock(50, 50, 64, 64)
     # Spirit(500, 0, 64, 64)
     # PinnedBlock(503, 230, 100, 25)
     # PlayerBlock(503, 0, 200, 200)
@@ -54,7 +52,7 @@ def run():
     # WackBlock(100, 100, [20 * Vec2d(0.5, -0.5), 20 * Vec2d(-0.5, 0.5), 20 * Vec2d(0.5, 1.5), 20 * Vec2d(1.5, 0.5)])
     # WackBlock(100, 100, [20 * Vec2d(1, 0), 20 * Vec2d(0, 1), 20 * Vec2d(1, 2), 20 * Vec2d(2, 1)])
 
-    if ENABLE_PROFILING:
+    if settings.ENABLE_PROFILING:
         pr = cProfile.Profile()
         pr.enable()
 
@@ -80,7 +78,7 @@ def run():
             if system_manager.update(fixed_update_dt) is False:
                 game_over = True
 
-    if ENABLE_PROFILING:
+    if settings.ENABLE_PROFILING:
         pr.disable()
         s = StringIO.StringIO()
         sortby = 'cumulative'

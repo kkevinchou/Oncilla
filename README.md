@@ -17,6 +17,7 @@ Optimizations
 * Could probably cut down on the number of collision checks by only handling one side of the collision,
     then handling the other side of the collision without doing all the redundant calculations
 * Rather than have all systems receive all messages, let systems specify which messages they're interested in
+* Avoid reconstruction of entire quad tree every frame
 
 Bugs
 =======
