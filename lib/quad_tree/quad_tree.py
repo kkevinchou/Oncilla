@@ -3,11 +3,19 @@ from lib.geometry.rect import Rect
 import pygame
 
 class QuadTreeNode(object):
-    def __init__(self, x, y, width, height, max_count=4):
+    def __init__(self, x, y, width, height, depth=0, max_count=4, max_depth=6):
         self.rect = Rect(x, y, width, height)
         self.entities = []
         self.children =[]
+        self.depth = depth
         self.max_count = max_count
+        self.max_depth = max_depth
+
+        self.const_kwargs = {
+            'max_count': max_count,
+            'max_depth': max_depth
+        }
+        self.max_depth = max_depth
 
         self.x = x
         self.y = y
@@ -24,7 +32,7 @@ class QuadTreeNode(object):
                     child.add_entity(entity)
             else:
                 self.entities.append(entity)
-            if len(self.entities) > self.max_count:
+            if len(self.entities) > self.max_count and self.depth < self.max_depth:
                 self.split()
 
     def remove_entity(self, entity):
@@ -38,10 +46,36 @@ class QuadTreeNode(object):
         child_width = int(self.width / 2.0)
         child_height = int(self.height / 2.0)
 
-        top_left_child = QuadTreeNode(self.x, self.y, child_width, child_height, self.max_count)
-        top_right_child = QuadTreeNode(self.x + child_width, self.y, self.width - child_width, child_height, self.max_count)
-        bottom_left_child = QuadTreeNode(self.x, self.y + child_height, child_width, self.height - child_height, self.max_count)
-        bottom_right_child = QuadTreeNode(self.x + child_width, self.y + child_height, self.width - child_width, self.height - child_height, self.max_count)
+        top_left_child = QuadTreeNode(self.x,
+            self.y,
+            child_width,
+            child_height,
+            self.depth + 1,
+            **self.const_kwargs
+        )
+        top_right_child = QuadTreeNode(
+            self.x + child_width,
+            self.y,
+            self.width - child_width,
+            child_height,
+            self.depth + 1, **self.const_kwargs
+        )
+        bottom_left_child = QuadTreeNode(
+            self.x,
+            self.y + child_height,
+            child_width,
+            self.height - child_height,
+            self.depth + 1,
+            **self.const_kwargs
+        )
+        bottom_right_child = QuadTreeNode(
+            self.x + child_width,
+            self.y + child_height,
+            self.width - child_width,
+            self.height - child_height,
+            self.depth + 1,
+            **self.const_kwargs
+        )
 
         self.children = [top_left_child, top_right_child, bottom_left_child, bottom_right_child]
 
@@ -66,9 +100,23 @@ class QuadTreeNode(object):
 
     def render(self, screen):
         color=(0, 115, 0)
+
         if self.children:
-            pygame.draw.line(screen, color, (self.x + int(self.width / 2.0), self.y), (self.x + int(self.width / 2.0), self.y + self.height))
-            pygame.draw.line(screen, color, (self.x, self.y + int(self.height / 2.0)), (self.x + self.width, self.y + int(self.height / 2.0)))
+            pygame.draw.line(
+                screen,
+                color,
+                (self.x + int(self.width / 2.0), self.y),
+                (self.x + int(self.width / 2.0),
+                self.y + self.height)
+            )
+            pygame.draw.line(
+                screen,
+                color,
+                (self.x, self.y + int(self.height / 2.0)),
+                (self.x + self.width,
+                self.y + int(self.height / 2.0))
+            )
+
         for child in self.children:
             child.render(screen)
 
@@ -80,7 +128,8 @@ class QuadTreeNode(object):
         indentation = '    ' * indentation_level
 
         for entity in self.entities:
-            x, y, width, height = entity.position.x, entity.position.y, entity[RectShapeComponent].width, entity[RectShapeComponent].height
+            x, y = entity.position.x, entity.position.y
+            width, height = entity[RectShapeComponent].width, entity[RectShapeComponent].height
             print '{}{}'.format(indentation, (x, y, width, height))
 
         for i, child in enumerate(self.children):

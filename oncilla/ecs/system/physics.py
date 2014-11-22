@@ -63,14 +63,16 @@ class PhysicsSystem(System):
     def update(self, delta):
         self.handle_messages()
         self.collisions = []
-        quad_tree = QuadTreeNode(0, 0, settings.SCREEN_WIDTH, settings.SCREEN_HEIGHT)
-        for entity in self.entities:
-            quad_tree.add_entity(entity)
 
-        self.system_manager.send_message({
-            'message_type': MESSAGE_TYPE.QUAD_TREE,
-            'quad_tree': quad_tree,
-        })
+        if settings.USE_SPATIAL_PARTITIONING:
+            quad_tree = QuadTreeNode(0, 0, settings.SCREEN_WIDTH, settings.SCREEN_HEIGHT)
+            for entity in self.entities:
+                quad_tree.add_entity(entity)
+
+            self.system_manager.send_message({
+                'message_type': MESSAGE_TYPE.QUAD_TREE,
+                'quad_tree': quad_tree,
+            })
 
         for entity in self.entities:
             if entity.get(ImmovableComponent):
@@ -108,8 +110,8 @@ class PhysicsSystem(System):
             if entity_a.get(ImmovableComponent):
                 continue
 
-            for entity_b in quad_tree.get_intersections(entity_a):
-            # for entity_b in self.entities:
+            collision_candidates = quad_tree.get_intersections(entity_a) if settings.USE_SPATIAL_PARTITIONING else self.entities
+            for entity_b in collision_candidates:
                 if entity_a == entity_b:
                     continue
 
