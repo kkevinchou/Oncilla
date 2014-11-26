@@ -1,6 +1,6 @@
 import random
 import unittest
-from lib.geometry import calculate_separating_axes
+from lib.geometry import calculate_separating_vectors
 from lib.geometry.util import generate_convex_hull, generate_random_polygon
 from lib.geometry.polygon import Polygon
 from lib.geometry.rect import Rect
@@ -11,15 +11,15 @@ class GeometryTest(unittest.TestCase):
     def setUp(self):
         pass
 
-#     def test_convex_hull_deterministic(self):
-#         length = None
-#         for i in range(100):
-#             points = [Vec2d(189, 442), Vec2d(189, 378), Vec2d(125, 378), Vec2d(125, 442), Vec2d(189, 350), Vec2d(189, 286), Vec2d(125, 286), Vec2d(125, 350), Vec2d(167, 346), Vec2d(167, 282), Vec2d(103, 282), Vec2d(103, 346), Vec2d(133, 376), Vec2d(133, 312), Vec2d(69, 312), Vec2d(69, 376), Vec2d(133, 442), Vec2d(133, 378), Vec2d(69, 378), Vec2d(69, 442)]
-#             num_points = len(generate_convex_hull(points))
-#             if length:
-#                 self.assertEquals(num_points, length)
-#             else:
-#                 length = num_points
+    # def test_convex_hull_deterministic(self):
+    #     length = None
+    #     for i in range(100):
+    #         points = [Vec2d(189, 442), Vec2d(189, 378), Vec2d(125, 378), Vec2d(125, 442), Vec2d(189, 350), Vec2d(189, 286), Vec2d(125, 286), Vec2d(125, 350), Vec2d(167, 346), Vec2d(167, 282), Vec2d(103, 282), Vec2d(103, 346), Vec2d(133, 376), Vec2d(133, 312), Vec2d(69, 312), Vec2d(69, 376), Vec2d(133, 442), Vec2d(133, 378), Vec2d(69, 378), Vec2d(69, 442)]
+    #         num_points = len(generate_convex_hull(points))
+    #         if length:
+    #             self.assertEquals(num_points, length)
+    #         else:
+    #             length = num_points
 
 #     def test_broken_hull_history1(self):
 #         points = [Vec2d(60, 130), Vec2d(65, 83), Vec2d(105, 74), Vec2d(141, 136), Vec2d(79, 123)]
@@ -80,21 +80,21 @@ class SeparatingAxisTest(unittest.TestCase):
     # def test(self):
     #     points_0 = [Vec2d(1, 0), Vec2d(0, 0), Vec2d(0, 1), Vec2d(1, 1)]
     #     points_1 = [Vec2d(1.5, 0), Vec2d(0.5, 0), Vec2d(0.5, 1), Vec2d(1.5, 1)]
-    #     result = calculate_separating_axes(points_0, points_1)
+    #     result = calculate_separating_vectors(points_0, points_1)
     #     self.assertSameElements(result, [Vec2d(-0.5, 0), Vec2d(1.5, 0), Vec2d(0, 1), Vec2d(0, -1)])
 
     # def test_angled(self):
     #     points_0 = [Vec2d(0.5, -0.5), Vec2d(-0.5, 0.5), Vec2d(0.5, 1.5), Vec2d(1.5, 0.5)]
     #     points_1 = [Vec2d(1, 0), Vec2d(0, 1), Vec2d(1, 2), Vec2d(2, 1)]
-    #     result = calculate_separating_axes(points_0, points_1)
+    #     result = calculate_separating_vectors(points_0, points_1)
     #     self.assertSameElements(result, [Vec2d(-0.5, -0.5), Vec2d(-1.0, 1.0), Vec2d(1.0, -1.0), Vec2d(1.5, 1.5)])
 
     def test_non_overlapping(self):
         points_0 = [Vec2d(1, 0), Vec2d(0, 0), Vec2d(0, 1), Vec2d(1, 1)]
         points_1 = [Vec2d(3, 0), Vec2d(2, 0), Vec2d(2, 1), Vec2d(3, 1)]
-        result = calculate_separating_axes(points_0, points_1)
-        print result
-        self.assertSameElements(result, [])
+        separating_vectors, overlaps = calculate_separating_vectors(points_0, points_1)
+        self.assertFalse(overlaps)
+        self.assertSameElements(separating_vectors, [])
     # def ztest_visual(self):
     #     pygame.init()
     #     size = width, height = 320, 240

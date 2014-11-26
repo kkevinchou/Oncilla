@@ -38,10 +38,10 @@ def run():
     system_manager = set_up_systems()
 
     from lib.ecs.component.physics import PhysicsComponent
-    PinnedBlock(100, 230, 100, 25)
-    PinnedBlock(400, 230, 100, 25)
+    # PinnedBlock(100, 230, 100, 25)
+    # PinnedBlock(400, 230, 100, 25)
     PinnedBlock(150, 300, 500, 25)
-    PlayerBlock(50, 50, 64, 64)
+    PlayerBlock(200, 200, 64, 64)
     # Spirit(500, 0, 64, 64)
     # PinnedBlock(503, 230, 100, 25)
     # PlayerBlock(503, 0, 200, 200)

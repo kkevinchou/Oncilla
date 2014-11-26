@@ -77,6 +77,7 @@ class PhysicsSystem(System):
         for entity in self.entities:
             if entity.get(ImmovableComponent):
                 continue
+
             physics_component = entity[PhysicsComponent]
             physics_component.update_forces(delta)
 
@@ -105,7 +106,7 @@ class PhysicsSystem(System):
             entity.position += delta * physics_component.get_total_velocity()
 
         for entity_a in self.entities:
-            overlaps_another_entity = False
+            overlapping_entities = []
 
             if entity_a.get(ImmovableComponent):
                 continue
@@ -128,12 +129,13 @@ class PhysicsSystem(System):
                 entity_a_total_velocity = entity_a[PhysicsComponent].get_total_velocity()
 
                 if overlap and entity_a.collision_mask & entity_b.collision_type:
+                    overlapping_entities.append(entity_b)
+
                     self.system_manager.send_message({
                         'message_type': MESSAGE_TYPE.COLLISION,
                         'collider': entity_a,
                         'collidee': entity_b
                     })
-                    overlaps_another_entity = True
 
                     if entity_a.get(SkipCollisionResolutionComponent) or entity_b.get(SkipCollisionResolutionComponent):
                         continue
@@ -169,13 +171,13 @@ class PhysicsSystem(System):
                         entity_a[PhysicsComponent].velocity = Vec2d(entity_a[PhysicsComponent].velocity[0], 0)
 
                     entity_a.position += resolution_vector
-                elif not overlap:
-                    if 'Friction' in entity_a[PhysicsComponent].forces:
-                        friction_force = entity_a[PhysicsComponent].forces['Friction']
-                        if friction_force.source == entity_b:
-                            entity_a[PhysicsComponent].forces.pop('Friction')
 
-            if not overlaps_another_entity:
+            if 'Friction' in entity_a[PhysicsComponent].forces:
+                friction_force = entity_a[PhysicsComponent].forces['Friction']
+                if friction_force.source not in overlapping_entities:
+                    entity_a[PhysicsComponent].forces.pop('Friction')
+
+            if len(overlapping_entities) == 0:
                 entity_a.send_message({
                     'message_type': MESSAGE_TYPE.AIRBORNE,
                 })
