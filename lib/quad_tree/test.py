@@ -14,7 +14,7 @@ class QuadTreeTest(unittest.TestCase):
         return entity
 
     def test_add(self):
-        node = QuadTreeNode(0, 0, 5, 5, 2)
+        node = QuadTreeNode(0, 0, 5, 5, max_count=2)
 
         node.add_entity(self.create_entity(0, 0, 1, 1))
         node.add_entity(self.create_entity(1, 0, 1, 1))
@@ -23,7 +23,7 @@ class QuadTreeTest(unittest.TestCase):
         self.assertEquals(len(node.entities), 2)
 
     def test_split(self):
-        node = QuadTreeNode(0, 0, 5, 5, 2)
+        node = QuadTreeNode(0, 0, 5, 5, max_count=2)
 
         node.add_entity(self.create_entity(0, 0, 1, 1))
         node.add_entity(self.create_entity(1, 0, 1, 1))
@@ -34,7 +34,7 @@ class QuadTreeTest(unittest.TestCase):
         self.assertEquals(len(node.children[0].children), 4)
 
     def test_add_to_sub_node(self):
-        node = QuadTreeNode(0, 0, 5, 5, 2)
+        node = QuadTreeNode(0, 0, 5, 5, max_count=2)
 
         node.add_entity(self.create_entity(0, 0, 1, 1))
         node.add_entity(self.create_entity(1, 0, 1, 1))
@@ -48,7 +48,7 @@ class QuadTreeTest(unittest.TestCase):
         self.assertEquals(len(node.children[0].children[0].entities), 2)
 
     def test_remove(self):
-        node = QuadTreeNode(0, 0, 5, 5, 2)
+        node = QuadTreeNode(0, 0, 5, 5, max_count=2)
 
         node.add_entity(self.create_entity(0, 0, 1, 1))
         node.add_entity(self.create_entity(1, 0, 1, 1))
